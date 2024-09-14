@@ -26,13 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return sequence;
     };
 
+    let correctSequence; // ゲーム中の正しい並び順
+
     // ボタンを生成して表示
     const renderButtons = () => {
         numberContainer.innerHTML = '';
-        const sequence = Array.from({ length: currentLength }, (_, i) => i + 1);
-        for (let i = 0; i < sequence.length; i++) {
+        const initialSequence = Array.from({ length: currentLength }, (_, i) => i + 1); // 初期状態の順番
+        for (let i = 0; i < initialSequence.length; i++) {
             const button = document.createElement('button');
-            button.textContent = sequence[i]; // 初期は順番に表示
+            button.textContent = initialSequence[i]; // 初期は順番に表示
             button.dataset.index = i;
             button.addEventListener('click', handleButtonClick);
             numberContainer.appendChild(button);
@@ -130,7 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
+
+    // 初期状態で数字を表示
+    renderButtons();
 });
+
 
 
 
