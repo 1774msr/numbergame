@@ -31,9 +31,21 @@ button {
     font-size: 18px;
 }
 
+#clear-message {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+#chino-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+}
+
 @media (max-width: 600px) {
     button {
         font-size: 14px;
         padding: 8px;
     }
 }
+
