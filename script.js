@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const numberContainer = document.getElementById('number-container');
     const checkButton = document.getElementById('check-button');
     const result = document.getElementById('result');
+    const clearMessage = document.getElementById('clear-message');
+    const restartButton = document.getElementById('restart-button');
 
     // ランダムな並び順を生成
     const generateRandomSequence = () => {
@@ -66,10 +68,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const correctCount = userSequence.reduce((count, value, index) => {
             return count + (value === correctSequence[index] ? 1 : 0);
         }, 0);
-        result.textContent = `正しい位置にある数字の数: ${correctCount}`;
+        
+        if (correctCount === 5) {
+            result.textContent = '';
+            clearMessage.style.display = 'block';
+        } else {
+            result.textContent = `正しい位置にある数字の数: ${correctCount}`;
+        }
+    };
+
+    const restartGame = () => {
+        clearMessage.style.display = 'none';
+        correctSequence = generateRandomSequence();
+        renderButtons();
     };
 
     renderButtons();
 
     checkButton.addEventListener('click', checkSequence);
+    restartButton.addEventListener('click', restartGame);
 });
+
