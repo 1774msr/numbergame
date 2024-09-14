@@ -123,8 +123,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
 
 
 
