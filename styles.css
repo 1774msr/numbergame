@@ -23,12 +23,11 @@ h1 {
 
 /* ボタンのスタイル */
 button {
-    padding: 10px;
-    font-size: 16px;
+    padding: 15px; /* ボタンのタップエリアを広げる */
+    font-size: 18px; /* フォントサイズを大きくしてタップしやすくする */
     margin: 5px;
     cursor: pointer;
     user-select: none;
-}
 
 /* 結果表示エリア */
 #result {
