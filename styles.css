@@ -1,8 +1,63 @@
+/* 基本設定 */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+
+/* ヘッダー */
+h1 {
+    margin-top: 20px;
+    font-size: 24px;
+}
+
+/* 数字ボタンコンテナ */
+#number-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+/* ボタンのスタイル */
+button {
+    padding: 10px;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* 結果表示エリア */
+#result {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+/* クリアメッセージエリア */
+#clear-message {
+    margin-top: 20px;
+    font-size: 18px;
+    display: none; /* 初期状態では非表示 */
+}
+
+/* チノちゃんの画像 */
 #chino-image {
     max-width: 100%;
     height: auto;
     margin-top: 20px;
     border: 2px solid #ddd; /* 画像の周りに境界線を追加して、表示確認しやすくする */
 }
+
+/* メディアクエリ - スマートフォン用 */
+@media (max-width: 600px) {
+    button {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
 
 
