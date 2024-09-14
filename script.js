@@ -5,15 +5,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearMessage = document.getElementById('clear-message');
     const restartButton = document.getElementById('restart-button');
     const chinoImage = document.getElementById('chino-image');
+    const startScreen = document.getElementById('start-screen');
+    const numberChoiceButtons = document.querySelectorAll('.number-choice');
 
     let firstButton = null; // 最初にタップされたボタン
+    let buttonCount = 5; // デフォルトのボタン数
 
-    // 「C h i n o」対応の配列
-    const textArray = ['C', 'h', 'i', 'n', 'o'];
+    // 「1」から「7」までの数字を設定する配列
+    const textArray = ['1', '2', '3', '4', '5', '6', '7'];
 
     // ランダムな並び順を生成
-    const generateRandomSequence = () => {
-        const sequence = [...Array(5).keys()];
+    const generateRandomSequence = (count) => {
+        const sequence = [...Array(count).keys()];
         for (let i = sequence.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [sequence[i], sequence[j]] = [sequence[j], sequence[i]];
@@ -21,12 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return sequence;
     };
 
-    let correctSequence = generateRandomSequence();
-
     // ボタンを生成して表示
     const renderButtons = () => {
         numberContainer.innerHTML = '';
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < buttonCount; i++) {
             const button = document.createElement('button');
             button.textContent = textArray[i];
             button.dataset.index = i;
@@ -67,15 +68,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const correctCount = userSequence.reduce((count, value, index) => {
             return count + (value === correctSequence[index] ? 1 : 0);
         }, 0);
-        
-        if (correctCount === 5) {
+
+        if (correctCount === buttonCount) {
             // ゲームクリア時の処理
             numberContainer.style.display = 'none';
             checkButton.style.display = 'none';
-            result.style.display = 'none';
+            stopTimer(); // タイマーを停止
             clearMessage.style.display = 'flex'; // 画像を表示する
         } else {
-            result.textContent = `正しい位置にある文字の数: ${correctCount}`;
+            result.textContent = `正しい位置にある数字の数: ${correctCount}`;
         }
     };
 
@@ -84,13 +85,43 @@ document.addEventListener('DOMContentLoaded', () => {
         numberContainer.style.display = 'flex';
         checkButton.style.display = 'block';
         result.style.display = 'block';
-        correctSequence = generateRandomSequence();
+        correctSequence = generateRandomSequence(buttonCount);
         renderButtons();
+        startTimer(); // タイマーをスタート
     };
 
-    renderButtons();
+    const startTimer = () => {
+        startTime = new Date();
+        timerInterval = setInterval(updateTimer, 1000); // 1秒ごとにタイマー更新
+    };
 
-    checkButton.addEventListener('click', checkSequence);
+    const updateTimer = () => {
+        if (startTime) {
+            const currentTime = new Date();
+            const elapsedTime = Math.floor((currentTime - startTime) / 1000); // 秒単位
+            result.textContent = `経過時間: ${elapsedTime}秒`;
+        }
+    };
+
+    const stopTimer = () => {
+        clearInterval(timerInterval);
+    };
+
+    // 数字の数を選ぶ処理
+    numberChoiceButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            buttonCount = parseInt(event.target.dataset.number, 10);
+            startScreen.style.display = 'none'; // 数字選択画面を非表示
+            numberContainer.style.display = 'flex'; // ゲームエリアを表示
+            checkButton.style.display = 'block'; // 確認ボタンを表示
+            result.style.display = 'block'; // 結果表示エリアを表示
+            correctSequence = generateRandomSequence(buttonCount); // 新しいシーケンスを生成
+            renderButtons(); // ボタンを再描画
+            startTimer(); // タイマーをスタート
+        });
+    });
+
     restartButton.addEventListener('click', restartGame);
 });
+
 
