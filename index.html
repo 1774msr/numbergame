@@ -8,8 +8,14 @@
 </head>
 <body>
     <h1>チノちゃんぺろぺろゲーム</h1>
-    <div id="number-container"></div>
-    <button id="check-button">確認</button>
+    <div id="start-screen">
+        <p>数字の数を選んでください:</p>
+        <button class="number-choice" data-number="5">5</button>
+        <button class="number-choice" data-number="6">6</button>
+        <button class="number-choice" data-number="7">7</button>
+    </div>
+    <div id="number-container" style="display: none;"></div>
+    <button id="check-button" style="display: none;">確認</button>
     <div id="result"></div>
     <div id="clear-message" style="display: none;">
         <p>クリア！</p>
@@ -19,3 +25,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
