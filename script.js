@@ -33,8 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
         numberContainer.innerHTML = '';
         sequence.forEach((num, i) => {
             const button = document.createElement('button');
-            button.textContent = num; // 正しい順序に表示
+            button.textContent = num; // 数字を表示
             button.dataset.index = i;
+            button.dataset.originalValue = num; // 初期値を保持
             button.addEventListener('click', handleButtonClick);
             numberContainer.appendChild(button);
         });
@@ -135,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初期状態で数字を表示
     renderButtons(Array.from({ length: currentLength }, (_, i) => i + 1));
 });
+
 
 
 
