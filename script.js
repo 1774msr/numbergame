@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const startScreen = document.getElementById('start-screen');
     const numberChoiceButtons = document.querySelectorAll('.number-choice');
     const elapsedTimeDisplay = document.getElementById('elapsed-time'); // 経過時間表示用の要素
+    const clearTimeDisplay = document.createElement('div'); // クリア時間表示用の要素
+    clearTimeDisplay.id = 'clear-time';
 
     let firstButton = null; // 最初にタップされたボタン
     let buttonCount = 5; // デフォルトのボタン数
@@ -81,8 +83,18 @@ document.addEventListener('DOMContentLoaded', () => {
             numberContainer.style.display = 'none';
             checkButton.style.display = 'none';
             elapsedTimeDisplay.style.display = 'none'; // 経過時間を非表示
+
+            // クリア時間を表示
+            const elapsedSeconds = Math.floor((new Date() - startTime) / 1000); // 秒単位
+            const minutes = Math.floor(elapsedSeconds / 60);
+            const seconds = elapsedSeconds % 60;
+            clearTimeDisplay.textContent = `Clear Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            clearTimeDisplay.style.fontSize = '36px'; // フォントサイズを大きくする
+            clearTimeDisplay.style.marginTop = '20px'; // 上部マージンを追加
+
+            clearMessage.appendChild(clearTimeDisplay); // クリア時間表示をクリアメッセージに追加
             setTimeout(() => {
-                clearMessage.style.display = 'flex'; // 画像を表示する
+                clearMessage.style.display = 'flex'; // 画像とクリア時間を表示
             }, 2000); // 2秒後にクリア画面を表示
         }
     };
@@ -93,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkButton.style.display = 'block';
         result.style.display = 'block';
         elapsedTimeDisplay.style.display = 'block'; // 経過時間を再表示
+        clearTimeDisplay.style.display = 'none'; // クリア時間を非表示にする
         correctSequence = generateRandomSequence(buttonCount);
         renderButtons();
         startTimer(); // タイマーをスタート
@@ -135,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
 
 
 
