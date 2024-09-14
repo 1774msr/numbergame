@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = document.createElement('button');
             button.textContent = textArray[i];
             button.dataset.index = i;
+            button.dataset.originalIndex = i; // 元のインデックスを保存
             button.addEventListener('click', handleButtonClick);
             numberContainer.appendChild(button);
         }
@@ -126,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
 
 
 
