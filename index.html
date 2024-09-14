@@ -3,26 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>チノちゃんぺろぺろ</title>
+    <title>チノちゃんぺろぺろゲーム</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>チノちゃんぺろぺろ</h1>
+    <h1>チノちゃんぺろぺろゲーム</h1>
     <div id="start-screen">
-        <p>瓶の数は何本にしますか:</p>
+        <p>Select the number of digits:</p>
         <button class="number-choice" data-number="5">5</button>
         <button class="number-choice" data-number="6">6</button>
         <button class="number-choice" data-number="7">7</button>
     </div>
-    <div id="number-container" style="display: none;"></div>
-    <button id="check-button" style="display: none;">確認</button>
+    <div id="number-container"></div>
+    <button id="check-button">Check</button>
     <div id="result"></div>
+    <div id="elapsed-time"></div> <!-- 経過時間表示用の要素 -->
     <div id="clear-message" style="display: none;">
-        <p>クリア！</p>
+        <p>Congratulations!</p>
         <img src="chino-chan.jpg" alt="チノちゃん" id="chino-image">
-        <button id="restart-button">再スタート</button>
+        <button id="restart-button">Restart</button>
     </div>
     <script src="script.js"></script>
 </body>
 </html>
+
 
