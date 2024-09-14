@@ -73,17 +73,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return count + (value === correctSequence[index] ? 1 : 0);
         }, 0);
 
+        result.textContent = `正しい位置にある数字の数: ${correctCount}`;
+
         if (correctCount === buttonCount) {
             // ゲームクリア時の処理
             stopTimer(); // タイマーを停止
-            result.textContent = ''; // 結果表示をクリア
+            numberContainer.style.display = 'none';
+            checkButton.style.display = 'none';
+            elapsedTimeDisplay.style.display = 'none'; // 経過時間を非表示
             setTimeout(() => {
-                numberContainer.style.display = 'none';
-                checkButton.style.display = 'none';
                 clearMessage.style.display = 'flex'; // 画像を表示する
             }, 2000); // 2秒後にクリア画面を表示
-        } else {
-            result.textContent = `Correctly placed numbers: ${correctCount}`;
         }
     };
 
@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         numberContainer.style.display = 'flex';
         checkButton.style.display = 'block';
         result.style.display = 'block';
+        elapsedTimeDisplay.style.display = 'block'; // 経過時間を再表示
         correctSequence = generateRandomSequence(buttonCount);
         renderButtons();
         startTimer(); // タイマーをスタート
@@ -105,8 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateTimer = () => {
         if (startTime) {
             const currentTime = new Date();
-            const elapsedTime = Math.floor((currentTime - startTime) / 1000); // 秒単位
-            elapsedTimeDisplay.textContent = `Elapsed Time: ${elapsedTime} seconds`;
+            const elapsedSeconds = Math.floor((currentTime - startTime) / 1000); // 秒単位
+            const minutes = Math.floor(elapsedSeconds / 60);
+            const seconds = elapsedSeconds % 60;
+            elapsedTimeDisplay.textContent = `Elapsed Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
     };
 
@@ -132,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
 
 
 
