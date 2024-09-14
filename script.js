@@ -4,14 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const result = document.getElementById('result');
     const clearMessage = document.getElementById('clear-message');
     const restartButton = document.getElementById('restart-button');
-    const chinoImage = document.getElementById('chino-image');
     const startScreen = document.getElementById('start-screen');
     const numberChoiceButtons = document.querySelectorAll('.number-choice');
 
     let firstButton = null; // 最初にタップされたボタン
     let buttonCount = 5; // デフォルトのボタン数
+    let correctSequence = []; // 正しいシーケンス
+    let startTime = null; // ゲーム開始時刻
+    let timerInterval = null; // タイマーのインターバルID
 
-    // 「1」から「7」までの数字を設定する配列
+    // 数字の配列を生成
     const textArray = ['1', '2', '3', '4', '5', '6', '7'];
 
     // ランダムな並び順を生成
@@ -58,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateButtonText = () => {
         const buttons = numberContainer.querySelectorAll('button');
         buttons.forEach(button => {
-            button.textContent = textArray[button.dataset.index];
+            button.textContent = textArray[parseInt(button.dataset.index, 10)];
         });
     };
 
@@ -123,5 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     restartButton.addEventListener('click', restartGame);
 });
+
 
 
