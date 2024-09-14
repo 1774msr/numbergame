@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const restartButton = document.getElementById('restart-button');
     const startScreen = document.getElementById('start-screen');
     const numberChoiceButtons = document.querySelectorAll('.number-choice');
+    const elapsedTimeDisplay = document.getElementById('elapsed-time'); // 経過時間表示用の要素
 
     let firstButton = null; // 最初にタップされたボタン
     let buttonCount = 5; // デフォルトのボタン数
@@ -74,12 +75,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (correctCount === buttonCount) {
             // ゲームクリア時の処理
-            numberContainer.style.display = 'none';
-            checkButton.style.display = 'none';
             stopTimer(); // タイマーを停止
-            clearMessage.style.display = 'flex'; // 画像を表示する
+            result.textContent = ''; // 結果表示をクリア
+            setTimeout(() => {
+                numberContainer.style.display = 'none';
+                checkButton.style.display = 'none';
+                clearMessage.style.display = 'flex'; // 画像を表示する
+            }, 2000); // 2秒後にクリア画面を表示
         } else {
-            result.textContent = `正しい位置にある数字の数: ${correctCount}`;
+            result.textContent = `Correctly placed numbers: ${correctCount}`;
         }
     };
 
@@ -102,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (startTime) {
             const currentTime = new Date();
             const elapsedTime = Math.floor((currentTime - startTime) / 1000); // 秒単位
-            result.textContent = `経過時間: ${elapsedTime}秒`;
+            elapsedTimeDisplay.textContent = `Elapsed Time: ${elapsedTime} seconds`;
         }
     };
 
@@ -118,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             numberContainer.style.display = 'flex'; // ゲームエリアを表示
             checkButton.style.display = 'block'; // 確認ボタンを表示
             result.style.display = 'block'; // 結果表示エリアを表示
+            elapsedTimeDisplay.style.display = 'block'; // 経過時間表示を表示
             correctSequence = generateRandomSequence(buttonCount); // 新しいシーケンスを生成
             renderButtons(); // ボタンを再描画
             startTimer(); // タイマーをスタート
@@ -127,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
 
 
 
