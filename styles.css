@@ -14,26 +14,20 @@ h1 {
     font-size: 24px;
 }
 
-/* スタート画面 */
+/* 数字選択画面 */
 #start-screen {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
+    margin-top: 20px;
 }
 
-/* 数字選択ボタン */
 .number-choice {
     padding: 15px;
     font-size: 18px;
     margin: 5px;
     cursor: pointer;
     user-select: none;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
 }
 
 /* 数字ボタンコンテナ */
@@ -56,6 +50,12 @@ button {
 /* 結果表示エリア */
 #result {
     margin-top: 20px;
+    font-size: 18px;
+}
+
+/* 経過時間表示エリア */
+#elapsed-time {
+    margin-top: 10px;
     font-size: 18px;
 }
 
@@ -96,4 +96,5 @@ button {
     border-radius: 5px;
     z-index: 11; /* 画像の上に表示 */
 }
+
 
