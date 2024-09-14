@@ -3,28 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>チノちゃんぺろぺろ</title>
+    <title>数字ゲーム</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>チノちゃんぺろぺろ</h1>
+    <h1>数字の順番を並べ替えてください</h1>
+    
     <div id="start-screen">
-        <p>Select the number of digits:</p>
+        <p>ゲーム開始前にボタンの数を選んでください</p>
         <button class="number-choice" data-number="5">5</button>
         <button class="number-choice" data-number="6">6</button>
         <button class="number-choice" data-number="7">7</button>
     </div>
+    
     <div id="number-container"></div>
-    <button id="check-button">Check</button>
+    
+    <button id="check-button">確認</button>
+    
     <div id="result"></div>
-    <div id="elapsed-time"></div> <!-- 経過時間表示用の要素 -->
-    <div id="clear-message" style="display: none;">
-        <p>Congratulations!</p>
-        <img src="chino-chan.jpg" alt="チノちゃん" id="chino-image">
-        <button id="restart-button">Restart</button>
+    <div id="elapsed-time">Elapsed Time: 00:00</div>
+    
+    <div id="clear-message">
+        <h2>Congratulations!</h2>
+        <div id="clear-time"></div>
+        <img id="chino-image" src="chino-chan.png" alt="チノちゃん">
     </div>
+    
+    <button id="restart-button">Restart</button>
+    
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
