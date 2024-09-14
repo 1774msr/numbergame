@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const result = document.getElementById('result');
     const clearMessage = document.getElementById('clear-message');
     const restartButton = document.getElementById('restart-button');
+    const chinoImage = document.getElementById('chino-image');
 
     let firstButton = null; // 最初にタップされたボタン
 
@@ -65,8 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 0);
         
         if (correctCount === 5) {
-            result.textContent = '';
-            clearMessage.style.display = 'block';
+            // ゲームクリア時の処理
+            numberContainer.style.display = 'none';
+            checkButton.style.display = 'none';
+            result.style.display = 'none';
+            clearMessage.style.display = 'flex'; // 画像を表示する
         } else {
             result.textContent = `正しい位置にある数字の数: ${correctCount}`;
         }
@@ -74,6 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const restartGame = () => {
         clearMessage.style.display = 'none';
+        numberContainer.style.display = 'flex';
+        checkButton.style.display = 'block';
+        result.style.display = 'block';
         correctSequence = generateRandomSequence();
         renderButtons();
     };
@@ -83,6 +90,3 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
-
-
-
