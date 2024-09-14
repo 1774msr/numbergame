@@ -3,8 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkButton = document.getElementById('check-button');
     const result = document.getElementById('result');
 
+    // ランダムな並び順を生成
     const generateRandomSequence = () => {
-        const sequence = [...Array(10).keys()].map(n => n + 1);
+        const sequence = [...Array(5).keys()].map(n => n + 1);
         for (let i = sequence.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [sequence[i], sequence[j]] = [sequence[j], sequence[i]];
@@ -14,9 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let correctSequence = generateRandomSequence();
 
+    // ボタンを生成して表示
     const renderButtons = () => {
         numberContainer.innerHTML = '';
-        for (let i = 1; i <= 10; i++) {
+        for (let i = 1; i <= 5; i++) {
             const button = document.createElement('button');
             button.textContent = i;
             button.draggable = true;
