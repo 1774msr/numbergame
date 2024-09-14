@@ -22,7 +22,6 @@ h1 {
     margin-top: 20px;
 }
 
-/* 数字選択ボタンのスタイル */
 .number-choice {
     padding: 15px;
     font-size: 18px;
@@ -86,15 +85,15 @@ button {
 /* チノちゃんの画像 */
 #chino-image {
     max-width: 90%; /* 画像の最大幅を設定 */
-    max-height: 60%; /* 画像の最大高さを設定 */
+    max-height: 70%; /* 画像の最大高さを設定 */
     object-fit: cover; /* 画像がアスペクト比を保ったまま全画面に収まる */
-    margin-bottom: 20px; /* 下部マージンを追加 */
+    margin-top: 20px; /* 上部マージンを追加 */
 }
 
 /* リスタートボタン */
 #restart-button {
     position: absolute;
-    bottom: 20px; /* 画面下部から少し上に配置 */
+    bottom: 20px; /* 画面下部に配置 */
     left: 50%;
     transform: translateX(-50%);
     padding: 15px 30px;
@@ -107,14 +106,6 @@ button {
     z-index: 11; /* 画像の上に表示 */
 }
 
-/* 初期画面のスタイル */
-#start-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
-    z-index: 10; /* 数字ボタンの表示より上に */
-}
 
 
 
