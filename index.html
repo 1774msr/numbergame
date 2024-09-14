@@ -8,31 +8,32 @@
 </head>
 <body>
     <h1>チノぺろ</h1>
-    
+
+    <!-- 数字の数を選ぶ画面 -->
     <div id="start-screen">
-        <p>ゲーム開始前にボタンの数を選んでください</p>
+        <p>Select the number of digits:</p>
         <button class="number-choice" data-number="5">5</button>
         <button class="number-choice" data-number="6">6</button>
         <button class="number-choice" data-number="7">7</button>
     </div>
-    
+
+    <!-- 数字並び替えゲームのメイン画面 -->
     <div id="number-container"></div>
-    
     <button id="check-button">確認</button>
-    
     <div id="result"></div>
-    <div id="elapsed-time">Elapsed Time: 00:00</div>
-    
+    <div id="elapsed-time"></div>
+
+    <!-- クリアメッセージと画像 -->
     <div id="clear-message">
         <div id="clear-time"></div>
-        <img id="chino-image" src="chino-chan.jpg" alt="チノちゃん">
+        <img src="chino-chan.jpg" alt="チノちゃん" id="chino-chan.jpg">
+        <button id="restart-button">再スタート</button>
     </div>
-    
-    <button id="restart-button">Restart</button>
-    
+
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
