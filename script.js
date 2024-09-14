@@ -12,12 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let timer;
     let seconds = 0;
 
-    // 「C h i n o」対応の配列
-    const textArray = ['C', 'h', 'i', 'n', 'o'];
+    // 数字の配列
+    const numberArray = [1, 2, 3, 4, 5, 6, 7];
 
     // ランダムな並び順を生成
-    const generateRandomSequence = () => {
-        const sequence = [...Array(5).keys()];
+    const generateRandomSequence = (length) => {
+        const sequence = numberArray.slice(0, length);
         for (let i = sequence.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [sequence[i], sequence[j]] = [sequence[j], sequence[i]];
@@ -25,14 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return sequence;
     };
 
-    let correctSequence = generateRandomSequence();
+    let correctSequence = generateRandomSequence(5); // 初期設定で数字5個
 
     // ボタンを生成して表示
     const renderButtons = () => {
         numberContainer.innerHTML = '';
         for (let i = 0; i < correctSequence.length; i++) {
             const button = document.createElement('button');
-            button.textContent = textArray[i];
+            button.textContent = correctSequence[i]; // 数字を表示
             button.dataset.index = i;
             button.addEventListener('click', handleButtonClick);
             numberContainer.appendChild(button);
@@ -61,13 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateButtonText = () => {
         const buttons = numberContainer.querySelectorAll('button');
         buttons.forEach(button => {
-            button.textContent = textArray[button.dataset.index];
+            button.textContent = correctSequence[button.dataset.index];
         });
     };
 
     const checkSequence = () => {
         const buttons = Array.from(numberContainer.querySelectorAll('button'));
-        const userSequence = buttons.map(button => parseInt(button.dataset.index, 10));
+        const userSequence = buttons.map(button => parseInt(button.textContent, 10));
         const correctCount = userSequence.reduce((count, value, index) => {
             return count + (value === correctSequence[index] ? 1 : 0);
         }, 0);
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const secs = (seconds % 60).toString().padStart(2, '0');
             document.getElementById('clear-time').textContent = `Clear Time: ${minutes}:${secs}`;
         } else {
-            result.textContent = `正しい位置にある文字の数: ${correctCount}`;
+            result.textContent = `正しい位置にある数字の数: ${correctCount}`;
         }
     };
 
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         result.style.display = 'block';
         elapsedTime.style.display = 'block';
         startScreen.style.display = 'none'; // 数字選択画面を非表示にする
-        correctSequence = generateRandomSequence();
+        correctSequence = generateRandomSequence(5); // 数字の数を5に固定
         renderButtons();
         seconds = 0;
         startTimer(); // タイマー再スタート
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.number-choice').forEach(button => {
         button.addEventListener('click', (event) => {
             const number = parseInt(event.target.dataset.number, 10);
-            correctSequence = generateRandomSequence();
+            correctSequence = generateRandomSequence(number); // 選択された数字の数でシーケンスを生成
             renderButtons();
             startScreen.style.display = 'none'; // 数字選択画面を非表示にする
             numberContainer.style.display = 'flex';
@@ -130,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
 
 
 
