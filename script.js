@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const elapsedTime = document.getElementById('elapsed-time');
     const clearMessage = document.getElementById('clear-message');
     const restartButton = document.getElementById('restart-button');
+    const clearTimeDisplay = document.getElementById('clear-time');
     const chinoImage = document.getElementById('chino-image');
 
     let firstButton = null; // 最初にタップされたボタン
@@ -72,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const correctCount = userSequence.reduce((count, value, index) => {
             return count + (value === correctSequence[index] ? 1 : 0);
         }, 0);
-        
+
         if (correctCount === correctSequence.length) {
             // ゲームクリア時の処理
             clearInterval(timer); // タイマー停止
@@ -85,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // クリアタイムの表示
             const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
             const secs = (seconds % 60).toString().padStart(2, '0');
-            document.getElementById('clear-time').textContent = `Clear Time: ${minutes}:${secs}`;
+            clearTimeDisplay.textContent = `Clear Time: ${minutes}:${secs}`;
         } else {
             result.textContent = `正しい位置にある数字の数: ${correctCount}`;
         }
@@ -108,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elapsedTime.style.display = 'block';
         startScreen.style.display = 'none'; // 数字選択画面を非表示にする
         correctSequence = generateRandomSequence(currentLength); // 選択された数字の数でシーケンスを生成
-        renderButtons(correctSequence);
+        renderButtons(Array.from({ length: currentLength }, (_, i) => i + 1)); // 初期表示は順番通り
         seconds = 0;
         startTimer(); // タイマー再スタート
     };
@@ -134,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初期状態で数字を表示
     renderButtons(Array.from({ length: currentLength }, (_, i) => i + 1));
 });
+
 
 
 
