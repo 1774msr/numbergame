@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let firstButton = null; // 最初にタップされたボタン
     let timer;
     let seconds = 0;
+    let currentLength = 5; // 初期の数字の数
 
     // 数字の配列
     const numberArray = [1, 2, 3, 4, 5, 6, 7];
@@ -25,14 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return sequence;
     };
 
-    let correctSequence = generateRandomSequence(5); // 初期設定で数字5個
-
     // ボタンを生成して表示
     const renderButtons = () => {
         numberContainer.innerHTML = '';
-        for (let i = 0; i < correctSequence.length; i++) {
+        const sequence = Array.from({ length: currentLength }, (_, i) => i + 1);
+        for (let i = 0; i < sequence.length; i++) {
             const button = document.createElement('button');
-            button.textContent = correctSequence[i]; // 数字を表示
+            button.textContent = sequence[i]; // 初期は順番に表示
             button.dataset.index = i;
             button.addEventListener('click', handleButtonClick);
             numberContainer.appendChild(button);
@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateButtonText = () => {
         const buttons = numberContainer.querySelectorAll('button');
         buttons.forEach(button => {
-            button.textContent = correctSequence[button.dataset.index];
+            const index = button.dataset.index;
+            button.textContent = correctSequence[index];
         });
     };
 
@@ -106,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         result.style.display = 'block';
         elapsedTime.style.display = 'block';
         startScreen.style.display = 'none'; // 数字選択画面を非表示にする
-        correctSequence = generateRandomSequence(5); // 数字の数を5に固定
+        correctSequence = generateRandomSequence(currentLength); // 選択された数字の数でシーケンスを生成
         renderButtons();
         seconds = 0;
         startTimer(); // タイマー再スタート
@@ -115,8 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 数字の数を選んだときの処理
     document.querySelectorAll('.number-choice').forEach(button => {
         button.addEventListener('click', (event) => {
-            const number = parseInt(event.target.dataset.number, 10);
-            correctSequence = generateRandomSequence(number); // 選択された数字の数でシーケンスを生成
+            currentLength = parseInt(event.target.dataset.number, 10);
+            correctSequence = generateRandomSequence(currentLength); // 選択された数字の数でシーケンスを生成
             renderButtons();
             startScreen.style.display = 'none'; // 数字選択画面を非表示にする
             numberContainer.style.display = 'flex';
@@ -130,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
 
 
 
