@@ -8,9 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let firstButton = null; // 最初にタップされたボタン
 
+    // 「C h i n o」対応の配列
+    const textArray = ['C', 'h', 'i', 'n', 'o'];
+
     // ランダムな並び順を生成
     const generateRandomSequence = () => {
-        const sequence = [...Array(5).keys()].map(n => n + 1);
+        const sequence = [...Array(5).keys()];
         for (let i = sequence.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [sequence[i], sequence[j]] = [sequence[j], sequence[i]];
@@ -23,10 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ボタンを生成して表示
     const renderButtons = () => {
         numberContainer.innerHTML = '';
-        for (let i = 1; i <= 5; i++) {
+        for (let i = 0; i < 5; i++) {
             const button = document.createElement('button');
-            button.textContent = i;
-            button.dataset.value = i;
+            button.textContent = textArray[i];
+            button.dataset.index = i;
             button.addEventListener('click', handleButtonClick);
             numberContainer.appendChild(button);
         }
@@ -41,9 +44,9 @@ document.addEventListener('DOMContentLoaded', () => {
             firstButton = clickedButton;
         } else {
             // 2つ目のボタンが選択された場合
-            const tempValue = clickedButton.dataset.value;
-            clickedButton.dataset.value = firstButton.dataset.value;
-            firstButton.dataset.value = tempValue;
+            const tempIndex = clickedButton.dataset.index;
+            clickedButton.dataset.index = firstButton.dataset.index;
+            firstButton.dataset.index = tempIndex;
 
             updateButtonText();
 
@@ -54,13 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateButtonText = () => {
         const buttons = numberContainer.querySelectorAll('button');
         buttons.forEach(button => {
-            button.textContent = button.dataset.value;
+            button.textContent = textArray[button.dataset.index];
         });
     };
 
     const checkSequence = () => {
         const buttons = Array.from(numberContainer.querySelectorAll('button'));
-        const userSequence = buttons.map(button => parseInt(button.dataset.value, 10));
+        const userSequence = buttons.map(button => parseInt(button.dataset.index, 10));
         const correctCount = userSequence.reduce((count, value, index) => {
             return count + (value === correctSequence[index] ? 1 : 0);
         }, 0);
@@ -72,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             result.style.display = 'none';
             clearMessage.style.display = 'flex'; // 画像を表示する
         } else {
-            result.textContent = `正しい位置にある数字の数: ${correctCount}`;
+            result.textContent = `正しい位置にある文字の数: ${correctCount}`;
         }
     };
 
@@ -90,3 +93,4 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
