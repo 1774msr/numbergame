@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let timer;
     let seconds = 0;
     let currentLength = 5; // 初期の数字の数
+    let correctSequence; // ゲーム中の正しい並び順
 
     // 数字の配列
     const numberArray = [1, 2, 3, 4, 5, 6, 7];
@@ -26,19 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return sequence;
     };
 
-    let correctSequence; // ゲーム中の正しい並び順
-
     // ボタンを生成して表示
-    const renderButtons = () => {
+    const renderButtons = (sequence) => {
         numberContainer.innerHTML = '';
-        const initialSequence = Array.from({ length: currentLength }, (_, i) => i + 1); // 初期状態の順番
-        for (let i = 0; i < initialSequence.length; i++) {
+        sequence.forEach((num, i) => {
             const button = document.createElement('button');
-            button.textContent = initialSequence[i]; // 初期は順番に表示
+            button.textContent = num; // 正しい順序に表示
             button.dataset.index = i;
             button.addEventListener('click', handleButtonClick);
             numberContainer.appendChild(button);
-        }
+        });
     };
 
     // ボタンがクリックされたときの処理
@@ -110,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elapsedTime.style.display = 'block';
         startScreen.style.display = 'none'; // 数字選択画面を非表示にする
         correctSequence = generateRandomSequence(currentLength); // 選択された数字の数でシーケンスを生成
-        renderButtons();
+        renderButtons(correctSequence);
         seconds = 0;
         startTimer(); // タイマー再スタート
     };
@@ -120,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', (event) => {
             currentLength = parseInt(event.target.dataset.number, 10);
             correctSequence = generateRandomSequence(currentLength); // 選択された数字の数でシーケンスを生成
-            renderButtons();
+            renderButtons(Array.from({ length: currentLength }, (_, i) => i + 1)); // 初期表示
             startScreen.style.display = 'none'; // 数字選択画面を非表示にする
             numberContainer.style.display = 'flex';
             checkButton.style.display = 'block';
@@ -134,8 +132,9 @@ document.addEventListener('DOMContentLoaded', () => {
     restartButton.addEventListener('click', restartGame);
 
     // 初期状態で数字を表示
-    renderButtons();
+    renderButtons(Array.from({ length: currentLength }, (_, i) => i + 1));
 });
+
 
 
 
