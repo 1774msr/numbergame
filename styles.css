@@ -72,6 +72,19 @@ button {
     background: rgba(0, 0, 0, 0.7); /* 半透明の背景 */
     color: #fff;
     z-index: 10; /* 前面に表示 */
+    flex-direction: column;
+}
+
+/* クリアメッセージ */
+#clear-message h2 {
+    font-size: 48px; /* フォントサイズを大きくする */
+    margin: 0; /* マージンをリセット */
+}
+
+/* クリア時間表示 */
+#clear-time {
+    font-size: 36px; /* フォントサイズを大きくする */
+    margin-top: 20px; /* 上部マージンを追加 */
 }
 
 /* チノちゃんの画像 */
@@ -96,6 +109,7 @@ button {
     border-radius: 5px;
     z-index: 11; /* 画像の上に表示 */
 }
+
 
 
 
