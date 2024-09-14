@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearMessage = document.getElementById('clear-message');
     const restartButton = document.getElementById('restart-button');
 
+    let firstButton = null; // 最初にタップされたボタン
+
     // ランダムな並び順を生成
     const generateRandomSequence = () => {
         const sequence = [...Array(5).keys()].map(n => n + 1);
@@ -23,35 +25,28 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 1; i <= 5; i++) {
             const button = document.createElement('button');
             button.textContent = i;
-            button.draggable = true;
             button.dataset.value = i;
-            button.addEventListener('dragstart', handleDragStart);
-            button.addEventListener('dragover', handleDragOver);
-            button.addEventListener('drop', handleDrop);
+            button.addEventListener('click', handleButtonClick);
             numberContainer.appendChild(button);
         }
     };
 
-    const handleDragStart = (event) => {
-        event.dataTransfer.setData('text/plain', event.target.dataset.value);
-    };
+    // ボタンがクリックされたときの処理
+    const handleButtonClick = (event) => {
+        const clickedButton = event.target;
 
-    const handleDragOver = (event) => {
-        event.preventDefault();
-    };
-
-    const handleDrop = (event) => {
-        event.preventDefault();
-        const draggedValue = event.dataTransfer.getData('text/plain');
-        const droppedButton = event.target;
-
-        if (droppedButton.tagName === 'BUTTON') {
-            const draggedButton = document.querySelector(`button[data-value="${draggedValue}"]`);
-            const tempValue = droppedButton.dataset.value;
-            droppedButton.dataset.value = draggedValue;
-            draggedButton.dataset.value = tempValue;
+        if (!firstButton) {
+            // 最初のボタンが選択された場合
+            firstButton = clickedButton;
+        } else {
+            // 2つ目のボタンが選択された場合
+            const tempValue = clickedButton.dataset.value;
+            clickedButton.dataset.value = firstButton.dataset.value;
+            firstButton.dataset.value = tempValue;
 
             updateButtonText();
+
+            firstButton = null; // リセット
         }
     };
 
@@ -88,5 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
 
 
