@@ -90,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
             clearMessage.appendChild(clearTimeDisplay);
             setTimeout(() => {
                 clearMessage.style.display = 'flex';
-                chinoImage.style.display = 'block';
             }, 2000);
         }
     };
@@ -128,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const startSlotMachine = () => {
+        slotMachine.style.display = 'block'; // スロットを表示
         const slotValues = [0, 0, 0];
         const slotInterval = 100;
         const duration = 3000;
@@ -142,10 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(spin, slotInterval);
             } else {
                 slotMachine.textContent = slotValues.join(' | ');
-                if (slotValues.every(val => val === 7)) {
+                if (Math.random() < 1 / 3) { // 1/3の確率で当たり
                     setTimeout(() => {
                         alert('おめでとう！');
-                        window.location.href = 'chinonono.jpg';
+                        chinoImage.style.display = 'block'; // 画像を表示
                     }, 500);
                 }
             }
