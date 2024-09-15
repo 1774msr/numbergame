@@ -9,19 +9,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const elapsedTimeDisplay = document.getElementById('elapsed-time');
     const clearTimeDisplay = document.createElement('div');
     clearTimeDisplay.id = 'clear-time';
-    const lotteryButton = document.getElementById('lottery-button');
-    const slotMachine = document.getElementById('slot-machine');
-    const chinoImage = document.getElementById('chino-image');
-
-    let firstButton = null;
+    
     let buttonCount = 5;
     let correctSequence = [];
     let startTime = null;
-    let timerInterval = null;
+    let draggedButton = null;
+    let startX, startY;  // タッチの開始位置
 
     const textArray = ['1', '2', '3', '4', '5', '6', '7'];
-
-    // 1から7の数字に対応するボタンの背景色
+    
+    // ボタンの色
     const colorArray = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink'];
 
     const generateRandomSequence = (count) => {
@@ -41,16 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
             button.dataset.index = i;
             button.dataset.originalIndex = i;
 
-            // ボタンの背景色を設定
-            if (i < colorArray.length) {
-                button.style.backgroundColor = colorArray[i];
-                button.style.color = 'white';  // ボタンのテキストを見やすくするために文字色を白に
-                button.style.border = 'none';  // ボタンの枠を無くしてシンプルに
-                button.style.padding = '10px'; // ボタンの余白を追加
-                button.style.margin = '5px';   // ボタンの間隔を空ける
-                button.style.fontSize = '20px'; // テキストサイズを大きくする
-                button.style.borderRadius = '10px'; // ボタンを丸くする
-            }
+            // ボタンのスタイルを大きく調整
+            button.style.backgroundColor = colorArray[i];
+            button.style.color = 'white';
+            button.style.border = 'none';
+            button.style.padding = '40px';  // 大きめのボタン
+            button.style.margin = '10px';
+            button.style.fontSize = '30px';
+            button.style.borderRadius = '10px';
+            button.style.position = 'relative';
 
             button.addEventListener('touchstart', handleTouchStart);
             button.addEventListener('touchmove', handleTouchMove);
@@ -60,125 +56,78 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // タッチ開始時の処理
     const handleTouchStart = (event) => {
         const touch = event.touches[0];
         startX = touch.clientX;
         startY = touch.clientY;
+        draggedButton = event.target;  // ドラッグ中のボタンを保持
+        draggedButton.style.transition = 'none';  // 移動中のスムーズな移動
     };
 
+    // タッチ移動中の処理
     const handleTouchMove = (event) => {
-        event.preventDefault(); // スクロールを防止する
+        const touch = event.touches[0];
+        const deltaX = touch.clientX - startX;
+        const deltaY = touch.clientY - startY;
+
+        // ボタンをドラッグする際に移動を視覚化
+        if (draggedButton) {
+            draggedButton.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        }
     };
 
+    // タッチ終了時の処理
     const handleTouchEnd = (event) => {
-        const touch = event.changedTouches[0];
-        const endX = touch.clientX;
-        const endY = touch.clientY;
+        if (draggedButton) {
+            draggedButton.style.transform = '';  // 移動をリセット
+            draggedButton.style.transition = 'transform 0.3s';  // スムーズな戻り動作
 
-        const diffX = endX - startX;
-        const diffY = endY - startY;
-
-        const threshold = 50; // スワイプと判定する最低移動距離
-
-        if (Math.abs(diffX) > Math.abs(diffY)) {
-            // 横方向のスワイプ
-            if (diffX > threshold) {
-                // 右にスワイプ
-                swapButton(event.target, 'right');
-            } else if (diffX < -threshold) {
-                // 左にスワイプ
-                swapButton(event.target, 'left');
-            }
-        } else {
-            // 縦方向のスワイプ
-            if (diffY > threshold) {
-                // 下にスワイプ
-                swapButton(event.target, 'down');
-            } else if (diffY < -threshold) {
-                // 上にスワイプ
-                swapButton(event.target, 'up');
-            }
+            // スワイプによる移動をここで実行
+            swapButton(event.target);
         }
+        draggedButton = null;
     };
 
-    const swapButton = (button, direction) => {
-        const index = parseInt(button.dataset.index, 10);
-        let targetIndex;
+    // ボタンの位置を入れ替える処理
+    const swapButton = (button) => {
+        const buttons = Array.from(numberContainer.querySelectorAll('button'));
+        const index = buttons.indexOf(button);
+        const targetIndex = (index + 1) % buttons.length;  // とりあえず右のボタンと入れ替える例
 
-        if (direction === 'right' && index % buttonCount < buttonCount - 1) {
-            targetIndex = index + 1;
-        } else if (direction === 'left' && index % buttonCount > 0) {
-            targetIndex = index - 1;
-        } else if (direction === 'down' && index + buttonCount < buttonCount * buttonCount) {
-            targetIndex = index + buttonCount;
-        } else if (direction === 'up' && index - buttonCount >= 0) {
-            targetIndex = index - buttonCount;
-        }
-        
-        if (targetIndex !== undefined) {
-            const buttons = numberContainer.querySelectorAll('button');
-            const targetButton = buttons[targetIndex];
-            const tempIndex = button.dataset.index;
-            button.dataset.index = targetButton.dataset.index;
-            targetButton.dataset.index = tempIndex;
-
-            updateButtonText();
-        }
+        const targetButton = buttons[targetIndex];
+        const tempContent = button.textContent;
+        button.textContent = targetButton.textContent;
+        targetButton.textContent = tempContent;
     };
 
-    const updateButtonText = () => {
-        const buttons = numberContainer.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.textContent = textArray[parseInt(button.dataset.index, 10)];
-        });
-    };
-
+    // シーケンスを確認する処理
     const checkSequence = () => {
         const buttons = Array.from(numberContainer.querySelectorAll('button'));
-        const userSequence = buttons.map(button => parseInt(button.dataset.index, 10));
-        const correctCount = userSequence.reduce((count, value, index) => {
-            return count + (value === correctSequence[index] ? 1 : 0);
-        }, 0);
+        const userSequence = buttons.map(button => parseInt(button.textContent, 10) - 1); // 1始まりから0始まりに
 
-        result.textContent = `正しい位置にある数字の数: ${correctCount}`;
+        let correctCount = 0;
+        buttons.forEach((button, index) => {
+            if (parseInt(button.textContent, 10) - 1 === correctSequence[index]) {
+                button.style.backgroundColor = 'green';  // 正しい位置のボタンを緑色に
+                correctCount++;
+            } else {
+                button.style.backgroundColor = 'red';  // 間違った位置のボタンを赤色に
+            }
+        });
+
+        result.textContent = `正しい位置の数: ${correctCount}`;
 
         if (correctCount === buttonCount) {
             stopTimer();
-            numberContainer.style.display = 'none';
-            checkButton.style.display = 'none';
-            elapsedTimeDisplay.style.display = 'none';
-
-            const elapsedSeconds = Math.floor((new Date() - startTime) / 1000);
-            const minutes = Math.floor(elapsedSeconds / 60);
-            const seconds = elapsedSeconds % 60;
-            clearTimeDisplay.textContent = `Clear Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            clearTimeDisplay.style.fontSize = '100px';
-            clearTimeDisplay.style.marginBottom = '20px';
-            clearTimeDisplay.style.fontWeight = 'bold';
-
-            clearMessage.appendChild(clearTimeDisplay);
-            setTimeout(() => {
-                clearMessage.style.display = 'flex';
-            }, 2000);
+            clearMessage.style.display = 'block';  // クリアメッセージ表示
         }
     };
 
-    const restartGame = () => {
-        clearMessage.style.display = 'none';
-        numberContainer.style.display = 'flex';
-        checkButton.style.display = 'block';
-        result.style.display = 'block';
-        elapsedTimeDisplay.style.display = 'block';
-        clearTimeDisplay.style.display = 'none';
-        chinoImage.style.display = 'none';
-        correctSequence = generateRandomSequence(buttonCount);
-        renderButtons();
-        startTimer();
-    };
-
+    // タイマー関連の処理
     const startTimer = () => {
         startTime = new Date();
-        timerInterval = setInterval(updateTimer, 1000);
+        setInterval(updateTimer, 1000);
     };
 
     const updateTimer = () => {
@@ -195,21 +144,23 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(timerInterval);
     };
 
+    // ゲーム開始処理
+    const restartGame = () => {
+        clearMessage.style.display = 'none';
+        correctSequence = generateRandomSequence(buttonCount);
+        renderButtons();
+        startTimer();
+    };
+
     numberChoiceButtons.forEach(button => {
         button.addEventListener('click', (event) => {
             buttonCount = parseInt(event.target.dataset.number, 10);
             startScreen.style.display = 'none';
             numberContainer.style.display = 'flex';
-            checkButton.style.display = 'block';
-            result.style.display = 'block';
-            elapsedTimeDisplay.style.display = 'block';
-            correctSequence = generateRandomSequence(buttonCount);
-            renderButtons();
-            startTimer();
+            restartGame();
         });
     });
 
-    lotteryButton.addEventListener('click', startSlotMachine);
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
