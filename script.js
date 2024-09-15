@@ -18,11 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let correctSequence = [];
     let startTime = null;
     let timerInterval = null;
-    let draggedButton = null;
-    let startTouchX = 0;
 
     const textArray = ['1', '2', '3', '4', '5', '6', '7'];
-    const colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6', '#c2f0c2'];
+    const colors = ['#FFDDC1', '#FFABAB', '#FFC3A0', '#FF677D', '#D4A5A5', '#392F5A', '#6A0572'];
 
     const generateRandomSequence = (count) => {
         const sequence = [...Array(count).keys()];
@@ -40,57 +38,84 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = textArray[i];
             button.dataset.index = i;
             button.dataset.originalIndex = i;
-            button.style.backgroundColor = colors[i]; // 色を設定
-            button.addEventListener('touchstart', handleTouchStart);
-            button.addEventListener('touchmove', handleTouchMove);
-            button.addEventListener('touchend', handleTouchEnd);
+            button.style.backgroundColor = colors[i];
+            button.style.color = '#000'; // ボタンの文字色
+            button.style.border = 'none';
+            button.style.borderRadius = '8px'; // 角を丸める
+            button.style.padding = '15px'; // ボタンのサイズを調整
+            button.style.margin = '5px'; // ボタン間の間隔を調整
+            button.addEventListener('click', handleButtonClick);
             numberContainer.appendChild(button);
         }
+        addSwipeSupport();
     };
 
-    const handleTouchStart = (event) => {
-        draggedButton = event.target;
-        draggedButton.classList.add('dragging');
-        startTouchX = event.touches[0].clientX;
-    };
+    const addSwipeSupport = () => {
+        let startX = 0;
+        let startY = 0;
+        let movingButton = null;
 
-    const handleTouchMove = (event) => {
-        const touch = event.touches[0];
-        const dx = touch.clientX - startTouchX;
-        if (Math.abs(dx) > 20) { // スワイプの閾値
-            if (draggedButton) {
-                const nextButton = findAdjacentButton(draggedButton, dx > 0 ? 'right' : 'left');
-                if (nextButton) {
-                    swapButtons(draggedButton, nextButton);
-                    startTouchX = touch.clientX; // スワイプのスピードを調整
+        const handleTouchStart = (event) => {
+            startX = event.touches[0].clientX;
+            startY = event.touches[0].clientY;
+            movingButton = event.target;
+        };
+
+        const handleTouchMove = (event) => {
+            if (movingButton) {
+                const deltaX = event.touches[0].clientX - startX;
+                const deltaY = event.touches[0].clientY - startY;
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) { // スワイプの感度調整
+                    const targetButton = getButtonAtPosition(event.touches[0].clientX, event.touches[0].clientY);
+                    if (targetButton && targetButton !== movingButton) {
+                        swapButtons(movingButton, targetButton);
+                        startX = event.touches[0].clientX;
+                        startY = event.touches[0].clientY;
+                    }
                 }
             }
-        }
+        };
+
+        const handleTouchEnd = () => {
+            movingButton = null;
+        };
+
+        const getButtonAtPosition = (x, y) => {
+            const buttons = numberContainer.querySelectorAll('button');
+            for (const button of buttons) {
+                const rect = button.getBoundingClientRect();
+                if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+                    return button;
+                }
+            }
+            return null;
+        };
+
+        const swapButtons = (buttonA, buttonB) => {
+            const tempIndex = buttonA.dataset.index;
+            buttonA.dataset.index = buttonB.dataset.index;
+            buttonB.dataset.index = tempIndex;
+            updateButtonText();
+        };
+
+        numberContainer.addEventListener('touchstart', handleTouchStart);
+        numberContainer.addEventListener('touchmove', handleTouchMove);
+        numberContainer.addEventListener('touchend', handleTouchEnd);
     };
 
-    const handleTouchEnd = () => {
-        if (draggedButton) {
-            draggedButton.classList.remove('dragging');
-            draggedButton = null;
-        }
-    };
+    const handleButtonClick = (event) => {
+        const clickedButton = event.target;
 
-    const findAdjacentButton = (button, direction) => {
-        const buttons = Array.from(numberContainer.querySelectorAll('button'));
-        const index = buttons.indexOf(button);
-        if (direction === 'right' && index < buttons.length - 1) {
-            return buttons[index + 1];
-        } else if (direction === 'left' && index > 0) {
-            return buttons[index - 1];
-        }
-        return null;
-    };
+        if (!firstButton) {
+            firstButton = clickedButton;
+        } else {
+            const tempIndex = clickedButton.dataset.index;
+            clickedButton.dataset.index = firstButton.dataset.index;
+            firstButton.dataset.index = tempIndex;
 
-    const swapButtons = (button1, button2) => {
-        const tempIndex = button1.dataset.index;
-        button1.dataset.index = button2.dataset.index;
-        button2.dataset.index = tempIndex;
-        updateButtonText();
+            updateButtonText();
+            firstButton = null;
+        }
     };
 
     const updateButtonText = () => {
@@ -112,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (correctCount === buttonCount) {
             stopTimer();
             numberContainer.style.display = 'none';
+            checkButton.style.display = 'none';
             elapsedTimeDisplay.style.display = 'none';
 
             const elapsedSeconds = Math.floor((new Date() - startTime) / 1000);
@@ -209,9 +235,3 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
-
-           
-
-
-
-
