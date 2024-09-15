@@ -22,25 +22,21 @@ h1 {
     margin-top: 20px;
 }
 
-.number-choice {
-    padding: 15px;
-    font-size: 18px;
-    margin: 5px;
+.number-choice, #lottery-button {
+    padding: 20px;
+    font-size: 24px;
+    margin: 10px;
     cursor: pointer;
     user-select: none;
+    border-radius: 10px;
+    width: 100px; /* 大きなボタン */
 }
 
 /* 抽選ボタン */
 #lottery-button {
-    padding: 15px;
-    font-size: 18px;
-    margin: 5px;
-    cursor: pointer;
-    user-select: none;
     background-color: #28a745; /* 緑色 */
     color: #fff;
     border: none;
-    border-radius: 5px;
 }
 
 /* 数字ボタンコンテナ */
@@ -53,23 +49,25 @@ h1 {
 
 /* ボタンのスタイル */
 button {
-    padding: 15px;
-    font-size: 18px;
-    margin: 5px;
+    padding: 20px;
+    font-size: 24px;
+    margin: 10px;
     cursor: pointer;
     user-select: none;
+    border-radius: 10px;
+    width: 100px; /* 大きなボタン */
 }
 
 /* 結果表示エリア */
 #result {
     margin-top: 20px;
-    font-size: 18px;
+    font-size: 24px;
 }
 
 /* 経過時間表示エリア */
 #elapsed-time {
     margin-top: 10px;
-    font-size: 18px;
+    font-size: 24px;
 }
 
 /* クリアメッセージエリア */
@@ -115,13 +113,13 @@ button {
 
 /* リスタートボタン */
 #restart-button {
-    padding: 15px 30px;
-    font-size: 18px;
+    padding: 20px 40px;
+    font-size: 24px;
     cursor: pointer;
     background-color: #007bff;
     color: #fff;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     margin-top: 20px; /* 上部マージンを追加して位置を調整 */
     z-index: 11; /* 画像の上に表示 */
 }
