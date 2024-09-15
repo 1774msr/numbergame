@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let startTouchX = 0;
 
     const textArray = ['1', '2', '3', '4', '5', '6', '7'];
+    const colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6', '#c2f0c2'];
 
     const generateRandomSequence = (count) => {
         const sequence = [...Array(count).keys()];
@@ -39,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = textArray[i];
             button.dataset.index = i;
             button.dataset.originalIndex = i;
-            button.addEventListener('click', handleButtonClick);
+            button.style.backgroundColor = colors[i]; // 色を設定
             button.addEventListener('touchstart', handleTouchStart);
             button.addEventListener('touchmove', handleTouchMove);
             button.addEventListener('touchend', handleTouchEnd);
@@ -48,10 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const handleTouchStart = (event) => {
-        const touch = event.touches[0];
-        startTouchX = touch.clientX;
         draggedButton = event.target;
         draggedButton.classList.add('dragging');
+        startTouchX = event.touches[0].clientX;
     };
 
     const handleTouchMove = (event) => {
@@ -62,9 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const nextButton = findAdjacentButton(draggedButton, dx > 0 ? 'right' : 'left');
                 if (nextButton) {
                     swapButtons(draggedButton, nextButton);
+                    startTouchX = touch.clientX; // スワイプのスピードを調整
                 }
             }
-            startTouchX = touch.clientX; // スワイプのスピードを調整
         }
     };
 
@@ -112,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (correctCount === buttonCount) {
             stopTimer();
             numberContainer.style.display = 'none';
-            checkButton.style.display = 'none';
             elapsedTimeDisplay.style.display = 'none';
 
             const elapsedSeconds = Math.floor((new Date() - startTime) / 1000);
@@ -210,6 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
+           
+
 
 
 
