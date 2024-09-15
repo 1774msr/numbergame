@@ -28,10 +28,6 @@ h1 {
     margin: 5px;
     cursor: pointer;
     user-select: none;
-    background-color: #28a745; /* 緑色 */
-    color: #fff;
-    border: none;
-    border-radius: 5px;
 }
 
 /* 抽選ボタン */
@@ -41,7 +37,7 @@ h1 {
     margin: 5px;
     cursor: pointer;
     user-select: none;
-    background-color: #007bff; /* 青色 */
+    background-color: #28a745; /* 緑色 */
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -50,32 +46,23 @@ h1 {
 /* 数字ボタンコンテナ */
 #number-container {
     display: flex;
-    flex-wrap: nowrap; /* 複数行にならないようにする */
+    flex-wrap: nowrap; /* 横一列に並べる */
     justify-content: center;
-    overflow-x: auto; /* 横スクロールを許可 */
     margin-bottom: 20px;
+    overflow-x: auto; /* スクロールを許可する */
 }
 
 /* ボタンのスタイル */
 button {
-    width: 60px; /* ボックスの幅 */
-    height: 60px; /* ボックスの高さ */
     padding: 15px;
     font-size: 18px;
     margin: 5px;
     cursor: pointer;
     user-select: none;
-    background-color: #007bff; /* ボックスの背景色 */
-    color: #fff; /* 文字色 */
-    border: none;
-    border-radius: 10px; /* 角を丸くする */
-}
-
-/* ドラッグ中のスタイル */
-.dragging {
-    background-color: #28a745; /* ドラッグ中の色 */
-    transform: scale(1.1); /* 拡大効果 */
-    z-index: 1; /* 他の要素の上に表示 */
+    background-color: lightgray; /* デフォルトの背景色 */
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 /* 結果表示エリア */
@@ -143,6 +130,12 @@ button {
     margin-top: 20px; /* 上部マージンを追加して位置を調整 */
     z-index: 11; /* 画像の上に表示 */
 }
+
+/* スワイプ中のスタイル */
+.dragging {
+    opacity: 0.5;
+}
+
 
 
 
