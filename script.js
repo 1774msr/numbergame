@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const startSlotMachine = () => {
-        slotMachine.style.display = 'block'; // スロットを表示
+        slotMachine.style.display = 'block';
         const slotValues = [0, 0, 0];
         const slotInterval = 100;
         const duration = 3000;
@@ -142,10 +142,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(spin, slotInterval);
             } else {
                 slotMachine.textContent = slotValues.join(' | ');
-                if (Math.random() < 1 / 3) { // 1/3の確率で当たり
+                if (slotValues.every(value => value === 7)) { // 777 が揃った場合
                     setTimeout(() => {
                         alert('おめでとう！');
-                        chinoImage.style.display = 'block'; // 画像を表示
+                        window.location.href = 'chinonono.jpg'; // 遷移する
+                    }, 500);
+                } else {
+                    setTimeout(() => {
+                        alert('残念！また挑戦してみてください。');
                     }, 500);
                 }
             }
