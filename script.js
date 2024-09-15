@@ -20,17 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerInterval = null;
 
     const textArray = ['1', '2', '3', '4', '5', '6', '7'];
-    const colors = ['#FF6347', '#4682B4', '#32CD32', '#FFD700', '#FF69B4', '#8A2BE2', '#00CED1']; // 異なる鮮やかな色
-
-    const numberColors = {
-        '1': '#FF6347', // トマトレッド
-        '2': '#4682B4', // スチールブルー
-        '3': '#32CD32', // ライムグリーン
-        '4': '#FFD700', // ゴールド
-        '5': '#FF69B4', // ホットピンク
-        '6': '#8A2BE2', // ブルーバイオレット
-        '7': '#00CED1'  // ダークターコイズ
-    };
 
     const generateRandomSequence = (count) => {
         const sequence = [...Array(count).keys()];
@@ -45,20 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
         numberContainer.innerHTML = '';
         for (let i = 0; i < buttonCount; i++) {
             const button = document.createElement('button');
-            const number = textArray[i];
-            button.textContent = number;
+            button.textContent = textArray[i];
             button.dataset.index = i;
             button.dataset.originalIndex = i;
-            button.style.backgroundColor = numberColors[number];
-            button.style.color = '#FFF'; // ボタンの文字色を白に設定
-            button.style.border = 'none';
-            button.style.borderRadius = '8px'; // 角を丸める
-            button.style.padding = '15px'; // ボタンのサイズを調整
-            button.style.margin = '5px'; // ボタン間の間隔を調整
-            button.style.fontSize = '18px'; // フォントサイズを設定
-            button.style.cursor = 'pointer'; // マウスカーソルをポインターに設定
-            button.addEventListener('touchstart', handleTouchStart); // スワイプ操作のためのイベントリスナー
-            button.addEventListener('touchend', handleTouchEnd);
+            button.addEventListener('click', handleButtonClick);
             numberContainer.appendChild(button);
         }
     };
@@ -82,6 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const buttons = numberContainer.querySelectorAll('button');
         buttons.forEach(button => {
             button.textContent = textArray[parseInt(button.dataset.index, 10)];
+            button.classList.add('lift');
+            setTimeout(() => button.classList.remove('lift'), 200);
         });
     };
 
@@ -155,42 +136,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const spin = () => {
             if (Date.now() < endTime) {
-                slotMachine.textContent = `${Math.floor(Math.random() * 7) + 1} | ${Math.floor(Math.random() * 7) + 1} | ${Math.floor(Math.random() * 7) + 1}`;
+                slotMachine.textContent = `${Math.floor(Math.random() * 1000)}`; // スロットのランダムな値
                 setTimeout(spin, slotInterval);
             } else {
-                const isWinner = Math.random() < 1 / 3; // 1/3 の確率で当たり
-                if (isWinner) {
-                    slotMachine.textContent = '7 | 7 | 7';
-                    setTimeout(() => {
-                        alert('おめでとう！');
-                        window.location.href = 'chinonono.jpg'; // 遷移する
-                    }, 500);
-                } else {
-                    slotMachine.textContent = '失敗';
-                    setTimeout(() => {
-                        alert('残念！また挑戦してみてください。');
-                        slotMachine.style.display = 'none'; // スロットを隠す
-                    }, 500);
-                }
+                slotMachine.textContent = 'スロット終了';
             }
         };
+
         spin();
     };
 
-    const handleTouchStart = (event) => {
-        const button = event.target;
-        button.classList.add('lift');
-    };
-
-    const handleTouchEnd = (event) => {
-        const button = event.target;
-        button.classList.remove('lift');
-        handleButtonClick(event);
-    };
-
     numberChoiceButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
-            buttonCount = parseInt(event.target.dataset.number, 10);
+        button.addEventListener('click', () => {
+            buttonCount = parseInt(button.dataset.number, 10);
             startScreen.style.display = 'none';
             numberContainer.style.display = 'flex';
             checkButton.style.display = 'block';
@@ -202,7 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    lotteryButton.addEventListener('click', startSlotMachine);
+    lotteryButton.addEventListener('click', () => {
+        startSlotMachine();
+    });
+
     checkButton.addEventListener('click', checkSequence);
+
     restartButton.addEventListener('click', restartGame);
 });
+
