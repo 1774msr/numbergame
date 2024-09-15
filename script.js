@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = textArray[i];
             button.dataset.index = i;
             button.dataset.originalIndex = i;
-            button.style.backgroundColor = colorArray[i]; // 数字に応じた色を設定
+            button.style.backgroundColor = colorArray[i];
+            button.classList.add('draggable');
             button.addEventListener('touchstart', handleTouchStart);
             button.addEventListener('touchmove', handleTouchMove);
             button.addEventListener('touchend', handleTouchEnd);
@@ -55,7 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
         touchStartX = touch.clientX;
         touchStartY = touch.clientY;
         firstButton = event.target;
+        firstButton.style.zIndex = '10'; // 前面に表示する
         firstButton.style.transform = 'scale(1.1)'; // 持ち上げている感じを出す
+        firstButton.classList.add('dragging'); // ドラッグ中のクラスを追加
     };
 
     const handleTouchMove = (event) => {
@@ -68,25 +71,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleTouchEnd = (event) => {
         if (!firstButton) return;
-        const touchedButton = event.target;
-        if (touchedButton !== firstButton) {
-            const firstIndex = parseInt(firstButton.dataset.index, 10);
-            const secondIndex = parseInt(touchedButton.dataset.index, 10);
 
-            firstButton.dataset.index = secondIndex;
-            touchedButton.dataset.index = firstIndex;
+        const buttons = numberContainer.querySelectorAll('button');
+        const targetButton = Array.from(buttons).find(button => 
+            button !== firstButton && isTouchInsideButton(event.changedTouches[0], button)
+        );
+
+        if (targetButton) {
+            const firstIndex = parseInt(firstButton.dataset.index, 10);
+            const targetIndex = parseInt(targetButton.dataset.index, 10);
+
+            firstButton.dataset.index = targetIndex;
+            targetButton.dataset.index = firstIndex;
 
             updateButtonText();
         }
+
         firstButton.style.transform = 'scale(1)'; // 元のサイズに戻す
+        firstButton.style.zIndex = ''; // z-indexをリセット
+        firstButton.classList.remove('dragging'); // ドラッグ中のクラスを削除
         firstButton = null;
+    };
+
+    const isTouchInsideButton = (touch, button) => {
+        const rect = button.getBoundingClientRect();
+        return (
+            touch.clientX >= rect.left &&
+            touch.clientX <= rect.right &&
+            touch.clientY >= rect.top &&
+            touch.clientY <= rect.bottom
+        );
     };
 
     const updateButtonText = () => {
         const buttons = numberContainer.querySelectorAll('button');
         buttons.forEach(button => {
             button.textContent = textArray[parseInt(button.dataset.index, 10)];
-            button.style.backgroundColor = colorArray[parseInt(button.dataset.index, 10)]; // 色も更新
+            button.style.backgroundColor = colorArray[parseInt(button.dataset.index, 10)];
         });
     };
 
@@ -211,3 +232,4 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
