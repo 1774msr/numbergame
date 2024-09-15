@@ -18,10 +18,8 @@ h1 {
 #start-screen {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #fff;
+    margin-top: 20px;
 }
 
 .number-choice {
@@ -50,84 +48,91 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 /* ボタンのスタイル */
 button {
-    border: none;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 5px;
+    padding: 20px;
     font-size: 18px;
+    margin: 5px;
     cursor: pointer;
     user-select: none;
-    transition: transform 0.2s;
+    transition: transform 0.1s ease; /* スムーズなトランジション */
 }
 
-/* 数字ボタンの色 */
-button[data-index='0'] { background-color: #FF4500; } /* オレンジレッド */
-button[data-index='1'] { background-color: #1E90FF; } /* ダッキーブルー */
-button[data-index='2'] { background-color: #32CD32; } /* ライムグリーン */
-button[data-index='3'] { background-color: #FFD700; } /* ゴールド */
-button[data-index='4'] { background-color: #FF69B4; } /* ホットピンク */
-button[data-index='5'] { background-color: #8A2BE2; } /* ブルーバイオレット */
-button[data-index='6'] { background-color: #00CED1; } /* ダークターコイズ */
-
-/* 数字ボタンが持ち上がる視覚的表現 */
+/* 持ち上げるアニメーション */
 button.lift {
     transform: translateY(-10px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* 結果表示 */
+/* 結果表示エリア */
 #result {
     margin-top: 20px;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 18px;
 }
 
-/* スタート画面 */
-#start-screen {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #fff;
-}
-
-/* 終了メッセージ */
-#clear-message {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #fff;
-    font-size: 24px;
-}
-
-/* タイマー表示 */
+/* 経過時間表示エリア */
 #elapsed-time {
     margin-top: 10px;
-    font-size: 20px;
+    font-size: 18px;
 }
 
-/* スロットマシン表示 */
+/* クリアメッセージエリア */
+#clear-message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none; /* 初期状態では非表示 */
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7); /* 半透明の背景 */
+    color: #fff;
+    z-index: 10; /* 前面に表示 */
+    flex-direction: column;
+    text-align: center;
+}
+
+/* クリア時間表示 */
+#clear-time {
+    font-size: 100px; /* クリア時間のフォントサイズを大きくする */
+    margin-bottom: 20px; /* 下部マージンを追加 */
+    font-weight: bold; /* 太字にして目立たせる */
+}
+
+/* チノちゃんの画像 */
+#chino-image {
+    max-width: 30%; /* 画像の最大幅を設定 */
+    max-height: 30%; /* 画像の最大高さを設定 */
+    object-fit: contain; /* 画像がアスペクト比を保ったまま全体に収まる */
+    margin-top: 20px; /* 上部マージンを追加 */
+    opacity: 0.3; /* 画像を薄くする */
+    display: none; /* 初期状態では非表示 */
+}
+
+/* スロット表示エリア */
 #slot-machine {
-    display: none;
     margin-top: 20px;
     font-size: 24px;
     font-weight: bold;
 }
 
-/* チノの画像 */
-#chino-image {
-    display: none;
-    margin-top: 20px;
-    width: 100px;
+/* リスタートボタン */
+#restart-button {
+    padding: 15px 30px;
+    font-size: 18px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    margin-top: 20px; /* 上部マージンを追加して位置を調整 */
+    z-index: 11; /* 画像の上に表示 */
 }
+
 
 
 
