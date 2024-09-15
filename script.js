@@ -20,7 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerInterval = null;
 
     const textArray = ['1', '2', '3', '4', '5', '6', '7'];
-    const colors = ['#FFDDC1', '#FFABAB', '#FFC3A0', '#FF677D', '#D4A5A5', '#392F5A', '#6A0572'];
+    const colors = ['#FF6347', '#4682B4', '#32CD32', '#FFD700', '#FF69B4', '#8A2BE2', '#00CED1']; // 異なる鮮やかな色
+
+    const numberColors = {
+        '1': '#FF6347', // トマトレッド
+        '2': '#4682B4', // スチールブルー
+        '3': '#32CD32', // ライムグリーン
+        '4': '#FFD700', // ゴールド
+        '5': '#FF69B4', // ホットピンク
+        '6': '#8A2BE2', // ブルーバイオレット
+        '7': '#00CED1'  // ダークターコイズ
+    };
 
     const generateRandomSequence = (count) => {
         const sequence = [...Array(count).keys()];
@@ -35,72 +45,22 @@ document.addEventListener('DOMContentLoaded', () => {
         numberContainer.innerHTML = '';
         for (let i = 0; i < buttonCount; i++) {
             const button = document.createElement('button');
-            button.textContent = textArray[i];
+            const number = textArray[i];
+            button.textContent = number;
             button.dataset.index = i;
             button.dataset.originalIndex = i;
-            button.style.backgroundColor = colors[i];
-            button.style.color = '#000'; // ボタンの文字色
+            button.style.backgroundColor = numberColors[number];
+            button.style.color = '#FFF'; // ボタンの文字色を白に設定
             button.style.border = 'none';
             button.style.borderRadius = '8px'; // 角を丸める
             button.style.padding = '15px'; // ボタンのサイズを調整
             button.style.margin = '5px'; // ボタン間の間隔を調整
-            button.addEventListener('click', handleButtonClick);
+            button.style.fontSize = '18px'; // フォントサイズを設定
+            button.style.cursor = 'pointer'; // マウスカーソルをポインターに設定
+            button.addEventListener('touchstart', handleTouchStart); // スワイプ操作のためのイベントリスナー
+            button.addEventListener('touchend', handleTouchEnd);
             numberContainer.appendChild(button);
         }
-        addSwipeSupport();
-    };
-
-    const addSwipeSupport = () => {
-        let startX = 0;
-        let startY = 0;
-        let movingButton = null;
-
-        const handleTouchStart = (event) => {
-            startX = event.touches[0].clientX;
-            startY = event.touches[0].clientY;
-            movingButton = event.target;
-        };
-
-        const handleTouchMove = (event) => {
-            if (movingButton) {
-                const deltaX = event.touches[0].clientX - startX;
-                const deltaY = event.touches[0].clientY - startY;
-                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 30) { // スワイプの感度調整
-                    const targetButton = getButtonAtPosition(event.touches[0].clientX, event.touches[0].clientY);
-                    if (targetButton && targetButton !== movingButton) {
-                        swapButtons(movingButton, targetButton);
-                        startX = event.touches[0].clientX;
-                        startY = event.touches[0].clientY;
-                    }
-                }
-            }
-        };
-
-        const handleTouchEnd = () => {
-            movingButton = null;
-        };
-
-        const getButtonAtPosition = (x, y) => {
-            const buttons = numberContainer.querySelectorAll('button');
-            for (const button of buttons) {
-                const rect = button.getBoundingClientRect();
-                if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-                    return button;
-                }
-            }
-            return null;
-        };
-
-        const swapButtons = (buttonA, buttonB) => {
-            const tempIndex = buttonA.dataset.index;
-            buttonA.dataset.index = buttonB.dataset.index;
-            buttonB.dataset.index = tempIndex;
-            updateButtonText();
-        };
-
-        numberContainer.addEventListener('touchstart', handleTouchStart);
-        numberContainer.addEventListener('touchmove', handleTouchMove);
-        numberContainer.addEventListener('touchend', handleTouchEnd);
     };
 
     const handleButtonClick = (event) => {
@@ -215,6 +175,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         spin();
+    };
+
+    const handleTouchStart = (event) => {
+        const button = event.target;
+        button.classList.add('lift');
+    };
+
+    const handleTouchEnd = (event) => {
+        const button = event.target;
+        button.classList.remove('lift');
+        handleButtonClick(event);
     };
 
     numberChoiceButtons.forEach(button => {
