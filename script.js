@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerInterval = null;
 
     const textArray = ['1', '2', '3', '4', '5', '6', '7'];
+    const colors = ['#FF6347', '#4682B4', '#32CD32', '#FFD700', '#8A2BE2', '#FF4500', '#00BFFF']; // 異なる色
 
     const generateRandomSequence = (count) => {
         const sequence = [...Array(count).keys()];
@@ -37,135 +38,106 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = textArray[i];
             button.dataset.index = i;
             button.dataset.originalIndex = i;
-            button.addEventListener('click', handleButtonClick);
+            button.style.backgroundColor = colors[i]; // 色を設定
+            button.addEventListener('touchstart', handleTouchStart);
+            button.addEventListener('touchmove', handleTouchMove);
+            button.addEventListener('touchend', handleTouchEnd);
             numberContainer.appendChild(button);
         }
     };
 
-    const handleButtonClick = (event) => {
-        const clickedButton = event.target;
+    let initialTouch = null;
 
-        if (!firstButton) {
-            firstButton = clickedButton;
-        } else {
-            const tempIndex = clickedButton.dataset.index;
-            clickedButton.dataset.index = firstButton.dataset.index;
-            firstButton.dataset.index = tempIndex;
-
-            updateButtonText();
-            firstButton = null;
-        }
+    const handleTouchStart = (event) => {
+        initialTouch = event.touches[0];
+        const button = event.target;
+        button.classList.add('lift');
     };
 
-    const updateButtonText = () => {
-        const buttons = numberContainer.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.textContent = textArray[parseInt(button.dataset.index, 10)];
-            button.classList.add('lift');
-            setTimeout(() => button.classList.remove('lift'), 200);
-        });
+    const handleTouchMove = (event) => {
+        if (!initialTouch) return;
+
+        const touch = event.touches[0];
+        const button = event.target;
+
+        // ボタンをドラッグするための位置を設定
+        button.style.position = 'absolute';
+        button.style.left = `${touch.pageX - button.clientWidth / 2}px`;
+        button.style.top = `${touch.pageY - button.clientHeight / 2}px`;
+    };
+
+    const handleTouchEnd = (event) => {
+        const button = event.target;
+        button.classList.remove('lift');
+        button.style.position = '';
+        button.style.left = '';
+        button.style.top = '';
+
+        // ボタンがドロップされた位置に合わせてデータを更新
+        const dropTarget = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+        if (dropTarget && dropTarget !== button && dropTarget.parentElement === numberContainer) {
+            const buttonIndex = parseInt(button.dataset.index, 10);
+            const dropTargetIndex = parseInt(dropTarget.dataset.index, 10);
+            [button.dataset.index, dropTarget.dataset.index] = [dropTarget.dataset.index, button.dataset.index];
+            [button.textContent, dropTarget.textContent] = [dropTarget.textContent, button.textContent];
+        }
     };
 
     const checkSequence = () => {
-        const buttons = Array.from(numberContainer.querySelectorAll('button'));
-        const userSequence = buttons.map(button => parseInt(button.dataset.index, 10));
-        const correctCount = userSequence.reduce((count, value, index) => {
-            return count + (value === correctSequence[index] ? 1 : 0);
-        }, 0);
-
-        result.textContent = `正しい位置にある数字の数: ${correctCount}`;
-
-        if (correctCount === buttonCount) {
-            stopTimer();
-            numberContainer.style.display = 'none';
-            checkButton.style.display = 'none';
-            elapsedTimeDisplay.style.display = 'none';
-
-            const elapsedSeconds = Math.floor((new Date() - startTime) / 1000);
-            const minutes = Math.floor(elapsedSeconds / 60);
-            const seconds = elapsedSeconds % 60;
-            clearTimeDisplay.textContent = `Clear Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            clearTimeDisplay.style.fontSize = '100px';
-            clearTimeDisplay.style.marginBottom = '20px';
-            clearTimeDisplay.style.fontWeight = 'bold';
-
+        const currentSequence = Array.from(numberContainer.children)
+            .map(button => parseInt(button.dataset.index, 10));
+        if (JSON.stringify(currentSequence) === JSON.stringify(correctSequence)) {
+            const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
+            result.textContent = '正解！';
+            clearTimeDisplay.textContent = `クリアタイム: ${elapsedTime}秒`;
+            clearMessage.style.display = 'flex';
+            chinoImage.style.display = 'block';
             clearMessage.appendChild(clearTimeDisplay);
-            setTimeout(() => {
-                clearMessage.style.display = 'flex';
-            }, 2000);
+            clearMessage.style.zIndex = '10';
+            clearMessage.style.opacity = '1';
+            clearMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            clearMessage.style.display = 'flex';
+            clearMessage.style.alignItems = 'center';
+            clearMessage.style.justifyContent = 'center';
+            clearMessage.style.textAlign = 'center';
+        } else {
+            result.textContent = 'もう一度やり直してください。';
         }
     };
 
-    const restartGame = () => {
-        clearMessage.style.display = 'none';
-        numberContainer.style.display = 'flex';
-        checkButton.style.display = 'block';
-        result.style.display = 'block';
-        elapsedTimeDisplay.style.display = 'block';
-        clearTimeDisplay.style.display = 'none';
-        chinoImage.style.display = 'none';
+    const startGame = (number) => {
+        buttonCount = number;
         correctSequence = generateRandomSequence(buttonCount);
         renderButtons();
-        startTimer();
-    };
-
-    const startTimer = () => {
-        startTime = new Date();
-        timerInterval = setInterval(updateTimer, 1000);
-    };
-
-    const updateTimer = () => {
-        if (startTime) {
-            const currentTime = new Date();
-            const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
-            const minutes = Math.floor(elapsedSeconds / 60);
-            const seconds = elapsedSeconds % 60;
-            elapsedTimeDisplay.textContent = `Elapsed Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
-    };
-
-    const stopTimer = () => {
-        clearInterval(timerInterval);
-    };
-
-    const startSlotMachine = () => {
-        slotMachine.style.display = 'block';
-        const slotInterval = 100;
-        const duration = 3000;
-        const endTime = Date.now() + duration;
-
-        const spin = () => {
-            if (Date.now() < endTime) {
-                slotMachine.textContent = `${Math.floor(Math.random() * 1000)}`; // スロットのランダムな値
-                setTimeout(spin, slotInterval);
-            } else {
-                slotMachine.textContent = 'スロット終了';
-            }
-        };
-
-        spin();
+        startTime = Date.now();
+        elapsedTimeDisplay.textContent = '計測開始: ' + new Date().toLocaleTimeString();
+        startScreen.style.display = 'none';
+        numberContainer.style.display = 'flex';
+        checkButton.style.display = 'block';
+        clearMessage.style.display = 'none';
     };
 
     numberChoiceButtons.forEach(button => {
         button.addEventListener('click', () => {
-            buttonCount = parseInt(button.dataset.number, 10);
-            startScreen.style.display = 'none';
-            numberContainer.style.display = 'flex';
-            checkButton.style.display = 'block';
-            result.style.display = 'block';
-            elapsedTimeDisplay.style.display = 'block';
-            correctSequence = generateRandomSequence(buttonCount);
-            renderButtons();
-            startTimer();
+            const number = parseInt(button.dataset.number, 10);
+            startGame(number);
         });
     });
 
     lotteryButton.addEventListener('click', () => {
-        startSlotMachine();
+        const number = parseInt(document.querySelector('.number-choice[data-number]').dataset.number, 10);
+        startGame(number);
     });
 
     checkButton.addEventListener('click', checkSequence);
 
-    restartButton.addEventListener('click', restartGame);
+    restartButton.addEventListener('click', () => {
+        location.reload();
+    });
+
+    // スロットマシンのサンプル表示
+    slotMachine.textContent = 'スロットマシン: 1234';
+
 });
+
 
