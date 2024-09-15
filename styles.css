@@ -76,20 +76,22 @@ button {
     text-align: center;
 }
 
-/* クリア時間表示 */
+/* クリア時間のスタイルを強調する */
 #clear-time {
-    font-size: 100px; /* クリア時間のフォントサイズを大きくする */
-    margin-bottom: 20px; /* 下部マージンを追加 */
-    font-weight: bold; /* 太字にして目立たせる */
+    font-size: 100px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #fff; /* 文字色を白にして目立たせる */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* 文字の影で視認性を高める */
 }
 
-/* チノちゃんの画像 */
+/* 画像のスタイルを薄くする */
 #chino-image {
-    max-width: 30%; /* 画像の最大幅を設定 */
-    max-height: 30%; /* 画像の最大高さを設定 */
-    object-fit: contain; /* 画像がアスペクト比を保ったまま全体に収まる */
-    margin-top: 20px; /* 上部マージンを追加 */
-}
+    max-width: 30%;
+    max-height: 30%;
+    object-fit: contain;
+    margin-top: 20px;
+    opacity: 0.3; /* 画像を薄くする */
 
 /* リスタートボタン */
 #restart-button {
