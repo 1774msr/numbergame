@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const textArray = ['1', '2', '3', '4', '5', '6', '7'];
 
+    // 1から7の数字に対応するボタンの背景色
+    const colorArray = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink'];
+
     const generateRandomSequence = (count) => {
         const sequence = [...Array(count).keys()];
         for (let i = sequence.length - 1; i > 0; i--) {
@@ -37,23 +40,89 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = textArray[i];
             button.dataset.index = i;
             button.dataset.originalIndex = i;
-            button.addEventListener('click', handleButtonClick);
+
+            // ボタンの背景色を設定
+            if (i < colorArray.length) {
+                button.style.backgroundColor = colorArray[i];
+                button.style.color = 'white';  // ボタンのテキストを見やすくするために文字色を白に
+                button.style.border = 'none';  // ボタンの枠を無くしてシンプルに
+                button.style.padding = '10px'; // ボタンの余白を追加
+                button.style.margin = '5px';   // ボタンの間隔を空ける
+                button.style.fontSize = '20px'; // テキストサイズを大きくする
+                button.style.borderRadius = '10px'; // ボタンを丸くする
+            }
+
+            button.addEventListener('touchstart', handleTouchStart);
+            button.addEventListener('touchmove', handleTouchMove);
+            button.addEventListener('touchend', handleTouchEnd);
+
             numberContainer.appendChild(button);
         }
     };
 
-    const handleButtonClick = (event) => {
-        const clickedButton = event.target;
+    const handleTouchStart = (event) => {
+        const touch = event.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+    };
 
-        if (!firstButton) {
-            firstButton = clickedButton;
+    const handleTouchMove = (event) => {
+        event.preventDefault(); // スクロールを防止する
+    };
+
+    const handleTouchEnd = (event) => {
+        const touch = event.changedTouches[0];
+        const endX = touch.clientX;
+        const endY = touch.clientY;
+
+        const diffX = endX - startX;
+        const diffY = endY - startY;
+
+        const threshold = 50; // スワイプと判定する最低移動距離
+
+        if (Math.abs(diffX) > Math.abs(diffY)) {
+            // 横方向のスワイプ
+            if (diffX > threshold) {
+                // 右にスワイプ
+                swapButton(event.target, 'right');
+            } else if (diffX < -threshold) {
+                // 左にスワイプ
+                swapButton(event.target, 'left');
+            }
         } else {
-            const tempIndex = clickedButton.dataset.index;
-            clickedButton.dataset.index = firstButton.dataset.index;
-            firstButton.dataset.index = tempIndex;
+            // 縦方向のスワイプ
+            if (diffY > threshold) {
+                // 下にスワイプ
+                swapButton(event.target, 'down');
+            } else if (diffY < -threshold) {
+                // 上にスワイプ
+                swapButton(event.target, 'up');
+            }
+        }
+    };
+
+    const swapButton = (button, direction) => {
+        const index = parseInt(button.dataset.index, 10);
+        let targetIndex;
+
+        if (direction === 'right' && index % buttonCount < buttonCount - 1) {
+            targetIndex = index + 1;
+        } else if (direction === 'left' && index % buttonCount > 0) {
+            targetIndex = index - 1;
+        } else if (direction === 'down' && index + buttonCount < buttonCount * buttonCount) {
+            targetIndex = index + buttonCount;
+        } else if (direction === 'up' && index - buttonCount >= 0) {
+            targetIndex = index - buttonCount;
+        }
+        
+        if (targetIndex !== undefined) {
+            const buttons = numberContainer.querySelectorAll('button');
+            const targetButton = buttons[targetIndex];
+            const tempIndex = button.dataset.index;
+            button.dataset.index = targetButton.dataset.index;
+            targetButton.dataset.index = tempIndex;
 
             updateButtonText();
-            firstButton = null;
         }
     };
 
@@ -124,36 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const stopTimer = () => {
         clearInterval(timerInterval);
-    };
-
-    const startSlotMachine = () => {
-        slotMachine.style.display = 'block';
-        const slotInterval = 100;
-        const duration = 3000;
-        const endTime = Date.now() + duration;
-
-        const spin = () => {
-            if (Date.now() < endTime) {
-                slotMachine.textContent = `${Math.floor(Math.random() * 7) + 1} | ${Math.floor(Math.random() * 7) + 1} | ${Math.floor(Math.random() * 7) + 1}`;
-                setTimeout(spin, slotInterval);
-            } else {
-                const isWinner = Math.random() < 1 / 3; // 1/3 の確率で当たり
-                if (isWinner) {
-                    slotMachine.textContent = '7 | 7 | 7';
-                    setTimeout(() => {
-                        alert('おめでとう！');
-                        window.location.href = 'chinonono.jpg'; // 遷移する
-                    }, 500);
-                } else {
-                    slotMachine.textContent = '失敗';
-                    setTimeout(() => {
-                        alert('残念！また挑戦してみてください。');
-                        slotMachine.style.display = 'none'; // スロットを隠す
-                    }, 500);
-                }
-            }
-        };
-        spin();
     };
 
     numberChoiceButtons.forEach(button => {
