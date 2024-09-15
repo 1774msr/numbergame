@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearTimeDisplay = document.createElement('div');
     clearTimeDisplay.id = 'clear-time';
     const lotteryButton = document.getElementById('lottery-button');
-    
+    const slotMachine = document.getElementById('slot-machine');
+    const chinoImage = document.getElementById('chino-image');
+
     let firstButton = null;
     let buttonCount = 5;
     let correctSequence = [];
@@ -81,12 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const minutes = Math.floor(elapsedSeconds / 60);
             const seconds = elapsedSeconds % 60;
             clearTimeDisplay.textContent = `Clear Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            clearTimeDisplay.style.fontSize = '36px';
-            clearTimeDisplay.style.marginTop = '20px';
+            clearTimeDisplay.style.fontSize = '100px';
+            clearTimeDisplay.style.marginBottom = '20px';
+            clearTimeDisplay.style.fontWeight = 'bold';
 
             clearMessage.appendChild(clearTimeDisplay);
             setTimeout(() => {
                 clearMessage.style.display = 'flex';
+                chinoImage.style.display = 'block';
             }, 2000);
         }
     };
@@ -98,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         result.style.display = 'block';
         elapsedTimeDisplay.style.display = 'block';
         clearTimeDisplay.style.display = 'none';
+        chinoImage.style.display = 'none';
         correctSequence = generateRandomSequence(buttonCount);
         renderButtons();
         startTimer();
@@ -122,29 +127,30 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(timerInterval);
     };
 
-    const startLottery = () => {
-        const slotCount = 3; // 3桁のスロット
-        let slots = [0, 0, 0]; // スロットの初期値
-        let counter = 0;
+    const startSlotMachine = () => {
+        const slotValues = [0, 0, 0];
+        const slotInterval = 100;
+        const duration = 3000;
+        const endTime = Date.now() + duration;
 
-        const spinSlot = () => {
-            slots = slots.map(() => Math.floor(Math.random() * 7) + 1);
-            console.log('Current Slots:', slots.join(' ')); // スロットの現在の値をコンソールに表示
-        };
-
-        const interval = setInterval(() => {
-            counter++;
-            spinSlot();
-            if (counter >= 20) {
-                clearInterval(interval);
-                if (slots.every(slot => slot === 7)) {
-                    alert('おめでとう！');
-                    window.location.href = 'chinonono.jpg'; // 遷移先の画像
-                } else {
-                    alert('残念！');
+        const spin = () => {
+            if (Date.now() < endTime) {
+                for (let i = 0; i < 3; i++) {
+                    slotValues[i] = Math.floor(Math.random() * 7) + 1;
+                }
+                slotMachine.textContent = slotValues.join(' | ');
+                setTimeout(spin, slotInterval);
+            } else {
+                slotMachine.textContent = slotValues.join(' | ');
+                if (slotValues.every(val => val === 7)) {
+                    setTimeout(() => {
+                        alert('おめでとう！');
+                        window.location.href = 'chinonono.jpg';
+                    }, 500);
                 }
             }
-        }, 100); // スロットの回転を100msごとに更新
+        };
+        spin();
     };
 
     numberChoiceButtons.forEach(button => {
@@ -161,27 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    lotteryButton.addEventListener('click', startSlotMachine);
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
-    lotteryButton.addEventListener('click', startLottery);
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
