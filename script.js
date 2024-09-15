@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = textArray[i];
             button.dataset.index = i;
             button.dataset.originalIndex = i;
-            button.style.backgroundColor = colorArray[i];
+            button.style.backgroundColor = colorArray[i]; // 数字に応じた色を設定
             button.addEventListener('touchstart', handleTouchStart);
             button.addEventListener('touchmove', handleTouchMove);
             button.addEventListener('touchend', handleTouchEnd);
@@ -47,101 +47,167 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    let currentButton = null;
-    let startX = 0;
-    let startY = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
 
     const handleTouchStart = (event) => {
-        currentButton = event.target;
-        startX = event.touches[0].clientX;
-        startY = event.touches[0].clientY;
+        const touch = event.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        firstButton = event.target;
+        firstButton.style.transform = 'scale(1.1)'; // 持ち上げている感じを出す
     };
 
     const handleTouchMove = (event) => {
-        if (currentButton) {
-            const dx = event.touches[0].clientX - startX;
-            const dy = event.touches[0].clientY - startY;
-            currentButton.style.transform = `translate(${dx}px, ${dy}px)`;
-        }
+        if (!firstButton) return;
+        const touch = event.touches[0];
+        const dx = touch.clientX - touchStartX;
+        const dy = touch.clientY - touchStartY;
+        firstButton.style.transform = `translate(${dx}px, ${dy}px) scale(1.1)`;
     };
 
     const handleTouchEnd = (event) => {
-        if (currentButton) {
-            const dropTarget = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
-            if (dropTarget && dropTarget !== currentButton && dropTarget.parentElement === numberContainer) {
-                const buttonIndex = parseInt(currentButton.dataset.index, 10);
-                const dropTargetIndex = parseInt(dropTarget.dataset.index, 10);
-                [currentButton.dataset.index, dropTarget.dataset.index] = [dropTarget.dataset.index, currentButton.dataset.index];
-                [currentButton.textContent, dropTarget.textContent] = [dropTarget.textContent, currentButton.textContent];
-            }
-            currentButton.style.transform = '';
-            currentButton = null;
+        if (!firstButton) return;
+        const touchedButton = event.target;
+        if (touchedButton !== firstButton) {
+            const firstIndex = parseInt(firstButton.dataset.index, 10);
+            const secondIndex = parseInt(touchedButton.dataset.index, 10);
+
+            firstButton.dataset.index = secondIndex;
+            touchedButton.dataset.index = firstIndex;
+
+            updateButtonText();
         }
+        firstButton.style.transform = 'scale(1)'; // 元のサイズに戻す
+        firstButton = null;
+    };
+
+    const updateButtonText = () => {
+        const buttons = numberContainer.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.textContent = textArray[parseInt(button.dataset.index, 10)];
+            button.style.backgroundColor = colorArray[parseInt(button.dataset.index, 10)]; // 色も更新
+        });
     };
 
     const checkSequence = () => {
         checkButtonClickCount++;
-        if (checkButtonClickCount >= 5) {
-            checkButtonClickCount = 0;
-            const confirmation = confirm("障がい者？");
+        if (checkButtonClickCount === 5) {
+            const confirmation = confirm('障がい者？');
             if (confirmation) {
-                alert("残念ですが、女子中学生と遊ぶことは現実的に不可能です。\nチノちゃんのまんすじは、この世に必ず存在しますが、我々がそれを観測するためには、シンギュラリティが必要です");
+                alert('残念ですが、女子中学生と遊ぶことは現実的に不可能です。チノちゃんのまんすじは、この世に必ず存在しますが、我々がそれを観測するためには、シンギュラリティが必要です');
+            } else {
                 return;
             }
+            checkButtonClickCount = 0;
         }
 
-        const currentSequence = Array.from(numberContainer.children)
-            .map(button => parseInt(button.dataset.index, 10));
-        if (JSON.stringify(currentSequence) === JSON.stringify(correctSequence)) {
-            const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
-            result.textContent = '正解！';
-            clearTimeDisplay.textContent = `クリアタイム: ${elapsedTime}秒`;
-            clearMessage.style.display = 'flex';
-            chinoImage.style.display = 'block';
+        const buttons = Array.from(numberContainer.querySelectorAll('button'));
+        const userSequence = buttons.map(button => parseInt(button.dataset.index, 10));
+        const correctCount = userSequence.reduce((count, value, index) => {
+            return count + (value === correctSequence[index] ? 1 : 0);
+        }, 0);
+
+        result.textContent = `正しい位置にある数字の数: ${correctCount}`;
+
+        if (correctCount === buttonCount) {
+            stopTimer();
+            numberContainer.style.display = 'none';
+            checkButton.style.display = 'none';
+            elapsedTimeDisplay.style.display = 'none';
+
+            const elapsedSeconds = Math.floor((new Date() - startTime) / 1000);
+            const minutes = Math.floor(elapsedSeconds / 60);
+            const seconds = elapsedSeconds % 60;
+            clearTimeDisplay.textContent = `Clear Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            clearTimeDisplay.style.fontSize = '100px';
+            clearTimeDisplay.style.marginBottom = '20px';
+            clearTimeDisplay.style.fontWeight = 'bold';
+
             clearMessage.appendChild(clearTimeDisplay);
-            clearMessage.style.zIndex = '10';
-            clearMessage.style.opacity = '1';
-            clearMessage.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-            clearMessage.style.display = 'flex';
-            clearMessage.style.alignItems = 'center';
-            clearMessage.style.justifyContent = 'center';
-            clearMessage.style.textAlign = 'center';
-        } else {
-            result.textContent = 'もう一度やり直してください。';
+            setTimeout(() => {
+                clearMessage.style.display = 'flex';
+            }, 2000);
         }
     };
 
-    const startGame = (number) => {
-        buttonCount = number;
-        correctSequence = generateRandomSequence(buttonCount);
-        renderButtons();
-        startTime = Date.now();
-        elapsedTimeDisplay.textContent = '計測開始: ' + new Date().toLocaleTimeString();
-        startScreen.style.display = 'none';
+    const restartGame = () => {
+        clearMessage.style.display = 'none';
         numberContainer.style.display = 'flex';
         checkButton.style.display = 'block';
-        clearMessage.style.display = 'none';
+        result.style.display = 'block';
+        elapsedTimeDisplay.style.display = 'block';
+        clearTimeDisplay.style.display = 'none';
+        chinoImage.style.display = 'none';
+        correctSequence = generateRandomSequence(buttonCount);
+        renderButtons();
+        startTimer();
+    };
+
+    const startTimer = () => {
+        startTime = new Date();
+        timerInterval = setInterval(updateTimer, 1000);
+    };
+
+    const updateTimer = () => {
+        if (startTime) {
+            const currentTime = new Date();
+            const elapsedSeconds = Math.floor((currentTime - startTime) / 1000);
+            const minutes = Math.floor(elapsedSeconds / 60);
+            const seconds = elapsedSeconds % 60;
+            elapsedTimeDisplay.textContent = `Elapsed Time: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+    };
+
+    const stopTimer = () => {
+        clearInterval(timerInterval);
+    };
+
+    const startSlotMachine = () => {
+        slotMachine.style.display = 'block';
+        const slotInterval = 100;
+        const duration = 3000;
+        const endTime = Date.now() + duration;
+
+        const spin = () => {
+            if (Date.now() < endTime) {
+                slotMachine.textContent = `${Math.floor(Math.random() * 7) + 1} | ${Math.floor(Math.random() * 7) + 1} | ${Math.floor(Math.random() * 7) + 1}`;
+                setTimeout(spin, slotInterval);
+            } else {
+                const isWinner = Math.random() < 1 / 3; // 1/3 の確率で当たり
+                if (isWinner) {
+                    slotMachine.textContent = '7 | 7 | 7';
+                    setTimeout(() => {
+                        alert('おめでとう！');
+                        window.location.href = 'chinonono.jpg'; // 遷移する
+                    }, 500);
+                } else {
+                    slotMachine.textContent = '失敗';
+                    setTimeout(() => {
+                        alert('残念！また挑戦してみてください。');
+                        slotMachine.style.display = 'none'; // スロットを隠す
+                    }, 500);
+                }
+            }
+        };
+        spin();
     };
 
     numberChoiceButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const number = parseInt(button.dataset.number, 10);
-            startGame(number);
+        button.addEventListener('click', (event) => {
+            buttonCount = parseInt(event.target.dataset.number, 10);
+            startScreen.style.display = 'none';
+            numberContainer.style.display = 'flex';
+            checkButton.style.display = 'block';
+            result.style.display = 'block';
+            elapsedTimeDisplay.style.display = 'block';
+            correctSequence = generateRandomSequence(buttonCount);
+            renderButtons();
+            startTimer();
         });
     });
 
-    lotteryButton.addEventListener('click', () => {
-        const number = parseInt(document.querySelector('.number-choice[data-number]').dataset.number, 10);
-        startGame(number);
-    });
-
+    lotteryButton.addEventListener('click', startSlotMachine);
     checkButton.addEventListener('click', checkSequence);
-
-    restartButton.addEventListener('click', () => {
-        location.reload();
-    });
-
-    // スロットマシンのサンプル表示
-    slotMachine.textContent = 'スロットマシン: 1234';
-
+    restartButton.addEventListener('click', restartGame);
 });
