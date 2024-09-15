@@ -18,8 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let correctSequence = [];
     let startTime = null;
     let timerInterval = null;
-    let startX = null;
-    let endX = null;
 
     const textArray = ['1', '2', '3', '4', '5', '6', '7'];
 
@@ -39,47 +37,50 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = textArray[i];
             button.dataset.index = i;
             button.dataset.originalIndex = i;
+            button.addEventListener('click', handleButtonClick);
+
+            // スワイプ操作のイベントリスナーを追加
             button.addEventListener('touchstart', handleTouchStart);
+            button.addEventListener('touchmove', handleTouchMove);
             button.addEventListener('touchend', handleTouchEnd);
+
             numberContainer.appendChild(button);
         }
     };
 
+    let startTouchX = 0;
+    let draggedButton = null;
+
     const handleTouchStart = (event) => {
-        startX = event.touches[0].clientX;
+        startTouchX = event.touches[0].clientX;
+        draggedButton = event.target;
+        draggedButton.classList.add('dragging');
     };
 
-    const handleTouchEnd = (event) => {
-        endX = event.changedTouches[0].clientX;
-        const threshold = 30; // スワイプの閾値
+    const handleTouchMove = (event) => {
+        if (draggedButton) {
+            const touchX = event.touches[0].clientX;
+            const diffX = touchX - startTouchX;
+            if (Math.abs(diffX) > 50) { // スワイプ距離が十分なら
+                const buttons = Array.from(numberContainer.querySelectorAll('button'));
+                const index = buttons.indexOf(draggedButton);
+                const swapIndex = diffX > 0 ? index + 1 : index - 1;
 
-        if (startX - endX > threshold) {
-            // スワイプ左
-            swapButton(event.target, getAdjacentButton(event.target, 'left'));
-        } else if (endX - startX > threshold) {
-            // スワイプ右
-            swapButton(event.target, getAdjacentButton(event.target, 'right'));
+                if (swapIndex >= 0 && swapIndex < buttons.length) {
+                    const swapButton = buttons[swapIndex];
+                    swapButton.dataset.index = draggedButton.dataset.index;
+                    draggedButton.dataset.index = swapButton.dataset.index;
+                    updateButtonText();
+                }
+                startTouchX = touchX;
+            }
         }
     };
 
-    const getAdjacentButton = (button, direction) => {
-        const allButtons = Array.from(numberContainer.querySelectorAll('button'));
-        const index = allButtons.indexOf(button);
-
-        if (direction === 'left' && index % 3 !== 0) {
-            return allButtons[index - 1];
-        } else if (direction === 'right' && (index + 1) % 3 !== 0) {
-            return allButtons[index + 1];
-        }
-        return null;
-    };
-
-    const swapButton = (button1, button2) => {
-        if (button2) {
-            const tempIndex = button2.dataset.index;
-            button2.dataset.index = button1.dataset.index;
-            button1.dataset.index = tempIndex;
-            updateButtonText();
+    const handleTouchEnd = () => {
+        if (draggedButton) {
+            draggedButton.classList.remove('dragging');
+            draggedButton = null;
         }
     };
 
@@ -215,4 +216,5 @@ document.addEventListener('DOMContentLoaded', () => {
     checkButton.addEventListener('click', checkSequence);
     restartButton.addEventListener('click', restartGame);
 });
+
 
