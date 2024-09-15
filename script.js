@@ -18,9 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let correctSequence = [];
     let startTime = null;
     let timerInterval = null;
+    let checkButtonClickCount = 0;
 
     const textArray = ['1', '2', '3', '4', '5', '6', '7'];
-    const colors = ['#FF6347', '#4682B4', '#32CD32', '#FFD700', '#8A2BE2', '#FF4500', '#00BFFF']; // 異なる色
+    const colorArray = ['#FF5733', '#33FF57', '#3357FF', '#F733FF', '#FF33A6', '#33F7FF', '#F7FF33'];
 
     const generateRandomSequence = (count) => {
         const sequence = [...Array(count).keys()];
@@ -38,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
             button.textContent = textArray[i];
             button.dataset.index = i;
             button.dataset.originalIndex = i;
-            button.style.backgroundColor = colors[i]; // 色を設定
+            button.style.backgroundColor = colorArray[i];
             button.addEventListener('touchstart', handleTouchStart);
             button.addEventListener('touchmove', handleTouchMove);
             button.addEventListener('touchend', handleTouchEnd);
@@ -46,44 +47,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    let initialTouch = null;
+    let currentButton = null;
+    let startX = 0;
+    let startY = 0;
 
     const handleTouchStart = (event) => {
-        initialTouch = event.touches[0];
-        const button = event.target;
-        button.classList.add('lift');
+        currentButton = event.target;
+        startX = event.touches[0].clientX;
+        startY = event.touches[0].clientY;
     };
 
     const handleTouchMove = (event) => {
-        if (!initialTouch) return;
-
-        const touch = event.touches[0];
-        const button = event.target;
-
-        // ボタンをドラッグするための位置を設定
-        button.style.position = 'absolute';
-        button.style.left = `${touch.pageX - button.clientWidth / 2}px`;
-        button.style.top = `${touch.pageY - button.clientHeight / 2}px`;
+        if (currentButton) {
+            const dx = event.touches[0].clientX - startX;
+            const dy = event.touches[0].clientY - startY;
+            currentButton.style.transform = `translate(${dx}px, ${dy}px)`;
+        }
     };
 
     const handleTouchEnd = (event) => {
-        const button = event.target;
-        button.classList.remove('lift');
-        button.style.position = '';
-        button.style.left = '';
-        button.style.top = '';
-
-        // ボタンがドロップされた位置に合わせてデータを更新
-        const dropTarget = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
-        if (dropTarget && dropTarget !== button && dropTarget.parentElement === numberContainer) {
-            const buttonIndex = parseInt(button.dataset.index, 10);
-            const dropTargetIndex = parseInt(dropTarget.dataset.index, 10);
-            [button.dataset.index, dropTarget.dataset.index] = [dropTarget.dataset.index, button.dataset.index];
-            [button.textContent, dropTarget.textContent] = [dropTarget.textContent, button.textContent];
+        if (currentButton) {
+            const dropTarget = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+            if (dropTarget && dropTarget !== currentButton && dropTarget.parentElement === numberContainer) {
+                const buttonIndex = parseInt(currentButton.dataset.index, 10);
+                const dropTargetIndex = parseInt(dropTarget.dataset.index, 10);
+                [currentButton.dataset.index, dropTarget.dataset.index] = [dropTarget.dataset.index, currentButton.dataset.index];
+                [currentButton.textContent, dropTarget.textContent] = [dropTarget.textContent, currentButton.textContent];
+            }
+            currentButton.style.transform = '';
+            currentButton = null;
         }
     };
 
     const checkSequence = () => {
+        checkButtonClickCount++;
+        if (checkButtonClickCount >= 5) {
+            checkButtonClickCount = 0;
+            const confirmation = confirm("障がい者？");
+            if (confirmation) {
+                alert("残念ですが、女子中学生と遊ぶことは現実的に不可能です。\nチノちゃんのまんすじは、この世に必ず存在しますが、我々がそれを観測するためには、シンギュラリティが必要です");
+                return;
+            }
+        }
+
         const currentSequence = Array.from(numberContainer.children)
             .map(button => parseInt(button.dataset.index, 10));
         if (JSON.stringify(currentSequence) === JSON.stringify(correctSequence)) {
@@ -139,5 +145,3 @@ document.addEventListener('DOMContentLoaded', () => {
     slotMachine.textContent = 'スロットマシン: 1234';
 
 });
-
-
