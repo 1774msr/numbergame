@@ -22,52 +22,65 @@ h1 {
     margin-top: 20px;
 }
 
-.number-choice, #lottery-button {
-    padding: 20px;
-    font-size: 24px;
-    margin: 10px;
+.number-choice {
+    padding: 15px;
+    font-size: 18px;
+    margin: 5px;
     cursor: pointer;
     user-select: none;
-    border-radius: 10px;
-    width: 100px; /* 大きなボタン */
 }
 
 /* 抽選ボタン */
 #lottery-button {
+    padding: 15px;
+    font-size: 18px;
+    margin: 5px;
+    cursor: pointer;
+    user-select: none;
     background-color: #28a745; /* 緑色 */
     color: #fff;
     border: none;
+    border-radius: 5px;
 }
 
 /* 数字ボタンコンテナ */
 #number-container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     margin-bottom: 20px;
+    flex-wrap: nowrap; /* 横一列に並べる */
 }
 
 /* ボタンのスタイル */
 button {
-    padding: 20px;
-    font-size: 24px;
-    margin: 10px;
+    padding: 20px; /* ボタンのサイズを大きく */
+    font-size: 24px; /* フォントサイズも大きく */
+    margin: 5px;
     cursor: pointer;
     user-select: none;
-    border-radius: 10px;
-    width: 100px; /* 大きなボタン */
+    background-color: #007bff; /* 背景色 */
+    color: #fff; /* テキストカラー */
+    border: none; /* ボーダーなし */
+    border-radius: 8px; /* 角を丸く */
+    transition: transform 0.1s ease; /* スワイプ時のトランジション */
+}
+
+/* スワイプ時の視覚的なフィードバック */
+button.dragging {
+    transform: translateY(-10px); /* 持ち上げているように見せる */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* シャドウで立体感を出す */
 }
 
 /* 結果表示エリア */
 #result {
     margin-top: 20px;
-    font-size: 24px;
+    font-size: 18px;
 }
 
 /* 経過時間表示エリア */
 #elapsed-time {
     margin-top: 10px;
-    font-size: 24px;
+    font-size: 18px;
 }
 
 /* クリアメッセージエリア */
@@ -113,14 +126,15 @@ button {
 
 /* リスタートボタン */
 #restart-button {
-    padding: 20px 40px;
-    font-size: 24px;
+    padding: 15px 30px;
+    font-size: 18px;
     cursor: pointer;
     background-color: #007bff;
     color: #fff;
     border: none;
-    border-radius: 10px;
+    border-radius: 5px;
     margin-top: 20px; /* 上部マージンを追加して位置を調整 */
     z-index: 11; /* 画像の上に表示 */
 }
+
 
